@@ -1,11 +1,16 @@
 import type { GraphEdge, GraphNode } from "@/lib/types";
-import { CHAIN_LABEL, CHAIN_TICKER, formatDateTime, HOP_CLASS_LABEL, NODE_KIND_LABEL, nodeColorVar } from "@/lib/format";
+import {
+  CHAIN_LABEL,
+  CHAIN_TICKER,
+  formatDateTime,
+  HOP_CLASS_LABEL,
+  NODE_KIND_LABEL,
+  nodeColorVar,
+} from "@/lib/format";
 import { Chip, DisclosureNote, Field, SectionLabel } from "@/components/ui/primitives";
 
 export type Selection =
-  | { type: "node"; node: GraphNode }
-  | { type: "edge"; edge: GraphEdge }
-  | null;
+  { type: "node"; node: GraphNode } | { type: "edge"; edge: GraphEdge } | null;
 
 export function EvidencePanel({ selection }: { selection: Selection }) {
   if (!selection) {
@@ -30,11 +35,17 @@ function NodeEvidence({ node }: { node: GraphNode }) {
       <div>
         <span
           className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-semibold"
-          style={{ color, borderColor: color, backgroundColor: "color-mix(in oklab, currentColor 12%, transparent)" }}
+          style={{
+            color,
+            borderColor: color,
+            backgroundColor: "color-mix(in oklab, currentColor 12%, transparent)",
+          }}
         >
           {NODE_KIND_LABEL[node.kind]}
         </span>
-        <p className="mt-3 font-mono text-[12.5px] leading-relaxed break-all text-foreground">{node.address}</p>
+        <p className="mt-3 font-mono text-[12.5px] leading-relaxed break-all text-foreground">
+          {node.address}
+        </p>
         <div className="mt-2 flex flex-wrap gap-1.5">
           <Chip tone="muted" mono>
             {CHAIN_LABEL[node.chain]}
@@ -43,7 +54,12 @@ function NodeEvidence({ node }: { node: GraphNode }) {
             hop {node.hop}
           </Chip>
           {node.riskScore > 0 ? (
-            <Chip tone={node.riskScore >= 80 ? "destructive" : node.riskScore >= 50 ? "warning" : "success"} mono>
+            <Chip
+              tone={
+                node.riskScore >= 80 ? "destructive" : node.riskScore >= 50 ? "warning" : "success"
+              }
+              mono
+            >
               risk {node.riskScore}
             </Chip>
           ) : null}
@@ -63,7 +79,9 @@ function NodeEvidence({ node }: { node: GraphNode }) {
         {node.txCount !== undefined ? (
           <Field label="Transactions" value={node.txCount.toLocaleString("en-IN")} mono />
         ) : null}
-        {node.firstSeen ? <Field label="First seen" value={formatDateTime(node.firstSeen)} /> : null}
+        {node.firstSeen ? (
+          <Field label="First seen" value={formatDateTime(node.firstSeen)} />
+        ) : null}
         {node.lastSeen ? <Field label="Last seen" value={formatDateTime(node.lastSeen)} /> : null}
       </div>
 
@@ -111,15 +129,15 @@ function NodeEvidence({ node }: { node: GraphNode }) {
 
       {node.kind === "mixer" ? (
         <DisclosureNote title="Probabilistic boundary" tone="destructive">
-          This engine does not claim deterministic unmixing. Mixer proximity is reported as a standalone risk
-          signal; anything downstream is correlation, never linkage.
+          This engine does not claim deterministic unmixing. Mixer proximity is reported as a
+          standalone risk signal; anything downstream is correlation, never linkage.
         </DisclosureNote>
       ) : null}
 
       {node.kind === "otc-hawala" ? (
         <DisclosureNote title="Terminus, not a failed trace">
-          Funds exit the on-chain world here. The address is persisted to the growing OTC/hawala registry so
-          future traces short-circuit on sight.
+          Funds exit the on-chain world here. The address is persisted to the growing OTC/hawala
+          registry so future traces short-circuit on sight.
         </DisclosureNote>
       ) : null}
     </div>
@@ -134,12 +152,18 @@ function EdgeEvidence({ edge }: { edge: GraphEdge }) {
         <Chip tone="primary" mono>
           {HOP_CLASS_LABEL[edge.classification]}
         </Chip>
-        <p className="mt-3 font-mono text-[12px] leading-relaxed break-all text-foreground">{tx.tx_hash}</p>
+        <p className="mt-3 font-mono text-[12px] leading-relaxed break-all text-foreground">
+          {tx.tx_hash}
+        </p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <Field label="Chain" value={CHAIN_LABEL[tx.chain]} />
-        <Field label="Block" value={tx.block_number ? tx.block_number.toLocaleString("en-IN") : "n/a"} mono />
+        <Field
+          label="Block"
+          value={tx.block_number ? tx.block_number.toLocaleString("en-IN") : "n/a"}
+          mono
+        />
         <Field
           label="Value"
           value={`${tx.value.toLocaleString("en-US", { maximumFractionDigits: 6 })} ${tx.token === "native" ? CHAIN_TICKER[tx.chain] : (tx.token ?? "—")}`}
@@ -147,14 +171,24 @@ function EdgeEvidence({ edge }: { edge: GraphEdge }) {
         />
         <Field label="Raw type" value={tx.tx_type_raw} mono />
         <Field label="Timestamp" value={formatDateTime(tx.timestamp)} />
-        <Field label="Gas used" value={tx.gas_used ? tx.gas_used.toLocaleString("en-IN") : "—"} mono />
+        <Field
+          label="Gas used"
+          value={tx.gas_used ? tx.gas_used.toLocaleString("en-IN") : "—"}
+          mono
+        />
       </div>
 
       {tx.token_contract ? <Field label="Token contract" value={tx.token_contract} mono /> : null}
 
       <div className="grid gap-4">
-        <Field label="From" value={<span className="font-mono text-[11.5px] break-all">{tx.from_address}</span>} />
-        <Field label="To" value={<span className="font-mono text-[11.5px] break-all">{tx.to_address}</span>} />
+        <Field
+          label="From"
+          value={<span className="font-mono text-[11.5px] break-all">{tx.from_address}</span>}
+        />
+        <Field
+          label="To"
+          value={<span className="font-mono text-[11.5px] break-all">{tx.to_address}</span>}
+        />
       </div>
 
       <div className="rounded-md border border-border bg-surface-raised px-3 py-2.5">
@@ -175,8 +209,8 @@ function EdgeEvidence({ edge }: { edge: GraphEdge }) {
 
       {edge.correlation === "time+amount" ? (
         <DisclosureNote title="Weak-signal hop">
-          This continuation was inferred from timing and amount correspondence, not from an on-chain link. Any
-          disclosure request citing this path must state that on its face.
+          This continuation was inferred from timing and amount correspondence, not from an on-chain
+          link. Any disclosure request citing this path must state that on its face.
         </DisclosureNote>
       ) : null}
     </div>

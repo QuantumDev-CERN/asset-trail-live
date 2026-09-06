@@ -57,7 +57,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           >
             Try again
           </button>
-          <a href="/" className="rounded-md border border-border-strong px-4 py-2 text-sm font-semibold hover:bg-accent">
+          <a
+            href="/"
+            className="rounded-md border border-border-strong px-4 py-2 text-sm font-semibold hover:bg-accent"
+          >
             Go to console
           </a>
         </div>
@@ -129,13 +132,24 @@ function RootComponent() {
           <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 lg:px-6">
             <Link to="/" className="flex items-center gap-2.5">
               <span className="flex h-8 w-8 items-center justify-center rounded-md border border-primary/50 bg-primary/12">
-                <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="var(--primary)" strokeWidth="2">
-                  <path d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4Z" strokeLinejoin="round" />
+                <svg
+                  viewBox="0 0 24 24"
+                  className="h-4.5 w-4.5"
+                  fill="none"
+                  stroke="var(--primary)"
+                  strokeWidth="2"
+                >
+                  <path
+                    d="M12 2 4 6v6c0 5 3.4 8.6 8 10 4.6-1.4 8-5 8-10V6l-8-4Z"
+                    strokeLinejoin="round"
+                  />
                   <path d="m9 12 2 2 4-4" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </span>
               <span className="leading-tight">
-                <span className="block text-sm font-bold tracking-tight">VASP Attribution Engine</span>
+                <span className="block text-sm font-bold tracking-tight">
+                  VASP Attribution Engine
+                </span>
                 <span className="block font-mono text-[10px] tracking-[0.14em] text-muted-foreground uppercase">
                   FIU-IND / LEA compliance console
                 </span>
@@ -149,7 +163,9 @@ function RootComponent() {
                   to={n.to}
                   activeOptions={{ exact: n.to === "/" }}
                   className="rounded-md px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                  activeProps={{ className: "bg-primary/12 text-primary hover:bg-primary/12 hover:text-primary" }}
+                  activeProps={{
+                    className: "bg-primary/12 text-primary hover:bg-primary/12 hover:text-primary",
+                  }}
                 >
                   {n.label}
                 </Link>
@@ -163,14 +179,16 @@ function RootComponent() {
               </span>
               <span className="hidden text-right leading-tight sm:block">
                 <span className="block text-xs font-semibold">Insp. R. Nagaraj</span>
-                <span className="block text-[10px] text-muted-foreground">Case-scoped access · audit logged</span>
+                <span className="block text-[10px] text-muted-foreground">
+                  Case-scoped access · audit logged
+                </span>
               </span>
             </div>
           </div>
           <div className="border-t border-border bg-warning/8 px-4 py-1.5 text-center lg:px-6">
             <p className="text-[11px] text-warning">
-              Defensive compliance tooling. Outputs are investigative leads with disclosed confidence — never
-              standalone proof of ownership.
+              Defensive compliance tooling. Outputs are investigative leads with disclosed
+              confidence — never standalone proof of ownership.
             </p>
           </div>
         </header>
@@ -182,10 +200,12 @@ function RootComponent() {
         <footer className="border-t border-border px-4 py-5 lg:px-6">
           <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-3 text-[11px] text-muted-foreground">
             <p>
-              Reports are hash-stamped under Bharatiya Sakshya Adhiniyam s.63. Every query in this console is
-              recorded in the audit trail.
+              Reports are hash-stamped under Bharatiya Sakshya Adhiniyam s.63. Every query in this
+              console is recorded in the audit trail.
             </p>
-            <p className="font-mono">Demo build · scope disclosures on the Scope &amp; limits page</p>
+            <p className="font-mono">
+              Demo build · scope disclosures on the Scope &amp; limits page
+            </p>
           </div>
         </footer>
       </div>

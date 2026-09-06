@@ -19,7 +19,8 @@ export const Route = createFileRoute("/cases/")({
       { property: "og:title", content: "Case Register — VASP Attribution Engine" },
       {
         property: "og:description",
-        content: "Every traced wallet case, filterable by forensic simulation flow and confidence band.",
+        content:
+          "Every traced wallet case, filterable by forensic simulation flow and confidence band.",
       },
     ],
   }),
@@ -37,13 +38,14 @@ function CaseRegister() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Case register</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Select a typology to load the matching worked case end to end. Intake cases opened this session appear
-          here too.
+          Select a typology to load the matching worked case end to end. Intake cases opened this
+          session appear here too.
         </p>
       </div>
 
       <DisclosureNote title="Controlled demonstration data" tone="warning">
-        All cases are prepared demonstration material or intake cases replayed against one of these typologies.
+        All cases are prepared demonstration material or intake cases replayed against one of these
+        typologies.
       </DisclosureNote>
 
       <div className="flex flex-wrap gap-2">
@@ -69,7 +71,9 @@ function CaseRegister() {
                   <Chip tone={s.tier === 1 ? "success" : "warning"}>Tier {s.tier}</Chip>
                 </div>
                 <p className="mt-2 text-sm">{s.blurb}</p>
-                <p className="mt-1 font-mono text-[11px] text-muted-foreground">Typology: {s.typology}</p>
+                <p className="mt-1 font-mono text-[11px] text-muted-foreground">
+                  Typology: {s.typology}
+                </p>
               </>
             );
           })()}
@@ -77,7 +81,10 @@ function CaseRegister() {
       ) : null}
 
       <Panel>
-        <PanelHeader title={`${visible.length} case${visible.length === 1 ? "" : "s"}`} subtitle="Click through for the full investigation workspace" />
+        <PanelHeader
+          title={`${visible.length} case${visible.length === 1 ? "" : "s"}`}
+          subtitle="Click through for the full investigation workspace"
+        />
         <ul className="divide-y divide-border">
           {visible.map((c) => (
             <li key={c.id}>

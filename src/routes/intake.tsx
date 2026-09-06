@@ -1,11 +1,23 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
-import { submitSahyogIntake, type SahyogIntakeResponse, type ApiMode, API_BASE_URL } from "@/lib/api";
+import {
+  submitSahyogIntake,
+  type SahyogIntakeResponse,
+  type ApiMode,
+  API_BASE_URL,
+} from "@/lib/api";
 import { SCENARIOS } from "@/data/cases";
 import { createInvestigation, useCases } from "@/lib/case-store";
 import { startTrace } from "@/lib/live-case";
-import { Button, Chip, DisclosureNote, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
+import {
+  Button,
+  Chip,
+  DisclosureNote,
+  Panel,
+  PanelHeader,
+  SectionLabel,
+} from "@/components/ui/primitives";
 import { CHAIN_LABEL } from "@/lib/format";
 import type { Chain, ScenarioKey } from "@/lib/types";
 
@@ -21,7 +33,8 @@ export const Route = createFileRoute("/intake")({
       { property: "og:title", content: "Case Intake — VASP Attribution Engine" },
       {
         property: "og:description",
-        content: "Open a tracked investigation from a suspect wallet address in the attribution console.",
+        content:
+          "Open a tracked investigation from a suspect wallet address in the attribution console.",
       },
     ],
   }),
@@ -32,7 +45,11 @@ const CHAINS: Chain[] = ["ethereum", "tron", "bitcoin", "bnb", "polygon", "solan
 const LIVE_CHAINS: Chain[] = ["ethereum", "tron"];
 
 const intakeSchema = z.object({
-  fir_number: z.string().trim().min(3, "Enter the FIR reference").max(80, "FIR reference is too long"),
+  fir_number: z
+    .string()
+    .trim()
+    .min(3, "Enter the FIR reference")
+    .max(80, "FIR reference is too long"),
   suspect_address: z
     .string()
     .trim()
@@ -40,7 +57,11 @@ const intakeSchema = z.object({
     .max(120, "Address is too long")
     .regex(/^[a-zA-Z0-9]+$/, "Addresses contain letters and digits only"),
   chain: z.enum(["ethereum", "tron", "bitcoin", "bnb", "polygon", "solana"]),
-  complainant_agency: z.string().trim().min(3, "Enter the submitting agency").max(120, "Agency name is too long"),
+  complainant_agency: z
+    .string()
+    .trim()
+    .min(3, "Enter the submitting agency")
+    .max(120, "Agency name is too long"),
   officer: z.string().trim().min(3, "Enter the investigating officer").max(80, "Name is too long"),
   amount: z
     .string()
@@ -62,7 +83,11 @@ function IntakePage() {
   const [template, setTemplate] = useState<ScenarioKey>("exchange-inflow");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pending, setPending] = useState(false);
-  const [receipt, setReceipt] = useState<{ data: SahyogIntakeResponse; mode: ApiMode; note?: string } | null>(null);
+  const [receipt, setReceipt] = useState<{
+    data: SahyogIntakeResponse;
+    mode: ApiMode;
+    note?: string;
+  } | null>(null);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -107,15 +132,15 @@ function IntakePage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Case intake</h1>
         <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-          Submitting a wallet opens a tracked investigation in this console: the case is registered, a job ID comes
-          back, and the trace starts running hop by hop on the case workspace.
+          Submitting a wallet opens a tracked investigation in this console: the case is registered,
+          a job ID comes back, and the trace starts running hop by hop on the case workspace.
         </p>
       </div>
 
       <DisclosureNote title="Controlled demonstration" tone="warning">
-        This console runs on prepared case data. An intake submission creates a real, trackable case record here, but
-        the hop sequence it resolves is replayed from the laundering typology you select below — it is a simulation,
-        not a live chain pull against the address you type.
+        This console runs on prepared case data. An intake submission creates a real, trackable case
+        record here, but the hop sequence it resolves is replayed from the laundering typology you
+        select below — it is a simulation, not a live chain pull against the address you type.
       </DisclosureNote>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
@@ -123,7 +148,11 @@ function IntakePage() {
           <PanelHeader
             title="Open an investigation"
             subtitle="Fields match the backend SahyogIntakeRequest model"
-            right={<Chip tone={API_BASE_URL ? "success" : "muted"} mono>{API_BASE_URL ? "live host set" : "stub mode"}</Chip>}
+            right={
+              <Chip tone={API_BASE_URL ? "success" : "muted"} mono>
+                {API_BASE_URL ? "live host set" : "stub mode"}
+              </Chip>
+            }
           />
           <form onSubmit={onSubmit} className="space-y-4 p-4">
             <TextField
@@ -159,14 +188,16 @@ function IntakePage() {
                       }
                     >
                       {CHAIN_LABEL[c]}
-                      <span className="ml-1.5 font-mono text-[10px] opacity-70">{live ? "adapter live" : "adapter only"}</span>
+                      <span className="ml-1.5 font-mono text-[10px] opacity-70">
+                        {live ? "adapter live" : "adapter only"}
+                      </span>
                     </button>
                   );
                 })}
               </div>
               <p className="mt-2 text-[11px] text-muted-foreground">
-                The Ethereum and Tron adapters are wired to live chain APIs in the engine. The other four implement
-                the same normalisation contract but are not wired in this build.
+                The Ethereum and Tron adapters are wired to live chain APIs in the engine. The other
+                four implement the same normalisation contract but are not wired in this build.
               </p>
             </div>
             <TextField
@@ -212,7 +243,9 @@ function IntakePage() {
                       <span className="text-xs font-semibold">{s.name}</span>
                       <Chip tone={s.tier === 1 ? "success" : "warning"}>Tier {s.tier}</Chip>
                     </div>
-                    <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{s.blurb}</p>
+                    <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                      {s.blurb}
+                    </p>
                   </button>
                 ))}
               </div>
@@ -220,10 +253,13 @@ function IntakePage() {
 
             {matchedCase ? (
               <div className="rounded-md border border-info/40 bg-info/8 px-3 py-2.5">
-                <p className="text-[11px] font-bold tracking-[0.1em] text-info uppercase">Cross-case match</p>
+                <p className="text-[11px] font-bold tracking-[0.1em] text-info uppercase">
+                  Cross-case match
+                </p>
                 <p className="mt-1 text-xs">
-                  This address already appears in <span className="font-mono">{matchedCase.id}</span> — {matchedCase.title}.
-                  The new case will be linked to it.
+                  This address already appears in{" "}
+                  <span className="font-mono">{matchedCase.id}</span> — {matchedCase.title}. The new
+                  case will be linked to it.
                 </p>
               </div>
             ) : null}
@@ -235,7 +271,9 @@ function IntakePage() {
               {matchedCase ? (
                 <Button
                   variant="outline"
-                  onClick={() => navigate({ to: "/cases/$caseId", params: { caseId: matchedCase.id } })}
+                  onClick={() =>
+                    navigate({ to: "/cases/$caseId", params: { caseId: matchedCase.id } })
+                  }
                 >
                   Open the existing case
                 </Button>
@@ -250,13 +288,17 @@ function IntakePage() {
               <PanelHeader
                 title="Intake receipt"
                 subtitle="Response from POST /sahyog/intake"
-                right={<Chip tone={receipt.mode === "live" ? "success" : "warning"}>{receipt.mode}</Chip>}
+                right={
+                  <Chip tone={receipt.mode === "live" ? "success" : "warning"}>{receipt.mode}</Chip>
+                }
               />
               <div className="space-y-3 p-4">
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
                     <SectionLabel>Job ID</SectionLabel>
-                    <p className="mt-1 font-mono text-lg font-semibold text-primary">{receipt.data.job_id}</p>
+                    <p className="mt-1 font-mono text-lg font-semibold text-primary">
+                      {receipt.data.job_id}
+                    </p>
                   </div>
                   <div>
                     <SectionLabel>Status</SectionLabel>
@@ -266,7 +308,9 @@ function IntakePage() {
                 <p className="text-xs leading-relaxed">{receipt.data.message}</p>
                 <DisclosureNote title="Integration stub" tone="warning">
                   {receipt.data.disclaimer}
-                  {receipt.note ? <span className="mt-1 block text-[11px] opacity-80">{receipt.note}</span> : null}
+                  {receipt.note ? (
+                    <span className="mt-1 block text-[11px] opacity-80">{receipt.note}</span>
+                  ) : null}
                 </DisclosureNote>
               </div>
             </Panel>
@@ -281,13 +325,18 @@ function IntakePage() {
               {SCENARIOS.map((s) => {
                 const record = cases.find((c) => c.origin !== "intake" && c.scenario === s.key);
                 return (
-                  <li key={s.key} className="flex flex-wrap items-start justify-between gap-3 px-4 py-3">
+                  <li
+                    key={s.key}
+                    className="flex flex-wrap items-start justify-between gap-3 px-4 py-3"
+                  >
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="text-xs font-semibold">{s.name}</p>
                         <Chip tone={s.tier === 1 ? "success" : "warning"}>Tier {s.tier}</Chip>
                       </div>
-                      <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{s.blurb}</p>
+                      <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                        {s.blurb}
+                      </p>
                     </div>
                     {record ? (
                       <Link
@@ -305,8 +354,8 @@ function IntakePage() {
           </Panel>
 
           <DisclosureNote title="Authorised use only" tone="destructive">
-            Intake is restricted to case-scoped investigators. Every submission and every query made against an
-            address is written to the audit trail with the submitting officer's identity.
+            Intake is restricted to case-scoped investigators. Every submission and every query made
+            against an address is written to the audit trail with the submitting officer's identity.
           </DisclosureNote>
         </div>
       </div>

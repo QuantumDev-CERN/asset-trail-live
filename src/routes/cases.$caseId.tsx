@@ -5,7 +5,15 @@ import { displayStatus, statusTone, useCase, useCases } from "@/lib/case-store";
 import { FlowGraph, GraphLegend } from "@/components/FlowGraph";
 import { EvidencePanel, type Selection } from "@/components/EvidencePanel";
 import { ConfidencePanel } from "@/components/ConfidencePanel";
-import { Button, Chip, DisclosureNote, Field, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
+import {
+  Button,
+  Chip,
+  DisclosureNote,
+  Field,
+  Panel,
+  PanelHeader,
+  SectionLabel,
+} from "@/components/ui/primitives";
 import { bandTone, CHAIN_LABEL, formatDateTime, formatInr, shortAddress } from "@/lib/format";
 import type { CaseRecord } from "@/lib/types";
 import type { LiveCaseState } from "@/lib/live-case";
@@ -30,14 +38,20 @@ export const Route = createFileRoute("/cases/$caseId")({
       { property: "og:title", content: "Case Workspace — VASP Attribution Engine" },
       {
         property: "og:description",
-        content: "Trace a suspect wallet to its nearest legally-addressable VASP with full evidence and timeline.",
+        content:
+          "Trace a suspect wallet to its nearest legally-addressable VASP with full evidence and timeline.",
       },
     ],
   }),
   component: CaseWorkspace,
 });
 
-const SEVERITY_TONE = { critical: "destructive", high: "warning", medium: "info", info: "muted" } as const;
+const SEVERITY_TONE = {
+  critical: "destructive",
+  high: "warning",
+  medium: "info",
+  info: "muted",
+} as const;
 
 function CaseWorkspace() {
   const { caseId } = Route.useParams();
@@ -51,8 +65,8 @@ function CaseWorkspace() {
       <div className="mx-auto max-w-2xl py-16 text-center">
         <h1 className="text-xl font-semibold">Case not in the register</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Intake-created cases live in this browser session only, so a page reload clears them. Open a demonstrator
-          case or submit a new intake.
+          Intake-created cases live in this browser session only, so a page reload clears them. Open
+          a demonstrator case or submit a new intake.
         </p>
         <Link
           to="/cases"
@@ -64,7 +78,15 @@ function CaseWorkspace() {
     );
   }
 
-  return <CaseWorkspaceBody record={record} allCases={allCases} selection={selection} setSelection={setSelection} live={live} />;
+  return (
+    <CaseWorkspaceBody
+      record={record}
+      allCases={allCases}
+      selection={selection}
+      setSelection={setSelection}
+      live={live}
+    />
+  );
 }
 
 function CaseWorkspaceBody({
@@ -86,7 +108,9 @@ function CaseWorkspaceBody({
   const stablecoin = detectStablecoin(record);
   const timeline = [...record.timeline, ...live.events].sort((a, b) => a.at.localeCompare(b.at));
   const progress =
-    live.status === "idle" ? 0 : Math.round((live.revealed / Math.max(record.edges.length, 1)) * 100);
+    live.status === "idle"
+      ? 0
+      : Math.round((live.revealed / Math.max(record.edges.length, 1)) * 100);
 
   return (
     <div className="space-y-6">
@@ -99,7 +123,9 @@ function CaseWorkspaceBody({
             </Chip>
             <Chip tone={bandTone(record.confidence.band)}>{record.confidence.band}</Chip>
             <Chip tone={statusTone(status)}>{status}</Chip>
-            {scenario ? <Chip tone={scenario.tier === 1 ? "success" : "warning"}>Tier {scenario.tier}</Chip> : null}
+            {scenario ? (
+              <Chip tone={scenario.tier === 1 ? "success" : "warning"}>Tier {scenario.tier}</Chip>
+            ) : null}
           </div>
           <h1 className="mt-2 text-2xl font-bold tracking-tight">{record.title}</h1>
           <p className="mt-1 max-w-3xl text-sm text-muted-foreground">{record.summary}</p>
@@ -129,10 +155,26 @@ function CaseWorkspaceBody({
       <Panel>
         <PanelHeader
           title="Live trace run"
-          subtitle={live.jobId ? `Job ${live.jobId}` : "Run the trace hop by hop, as the engine would on intake"}
+          subtitle={
+            live.jobId
+              ? `Job ${live.jobId}`
+              : "Run the trace hop by hop, as the engine would on intake"
+          }
           right={
-            <Chip tone={live.status === "complete" ? "success" : live.status === "tracing" ? "warning" : "muted"}>
-              {live.status === "complete" ? "trace complete" : live.status === "tracing" ? "tracing…" : "not started"}
+            <Chip
+              tone={
+                live.status === "complete"
+                  ? "success"
+                  : live.status === "tracing"
+                    ? "warning"
+                    : "muted"
+              }
+            >
+              {live.status === "complete"
+                ? "trace complete"
+                : live.status === "tracing"
+                  ? "tracing…"
+                  : "not started"}
             </Chip>
           }
         />
@@ -203,13 +245,19 @@ function CaseWorkspaceBody({
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
         <Panel className="overflow-hidden">
-          <PanelHeader title="Confidence attribution" subtitle="Rule-based, explainable, per-signal" />
+          <PanelHeader
+            title="Confidence attribution"
+            subtitle="Rule-based, explainable, per-signal"
+          />
           <ConfidencePanel record={record} />
         </Panel>
 
         <div className="space-y-6">
           <Panel>
-            <PanelHeader title="Terminus classification" subtitle="Where this trace legally lands" />
+            <PanelHeader
+              title="Terminus classification"
+              subtitle="Where this trace legally lands"
+            />
             <div className="space-y-3 p-4">
               <div className="flex flex-wrap items-center gap-2">
                 <Chip
@@ -231,8 +279,12 @@ function CaseWorkspaceBody({
                 </Chip>
                 <span className="text-sm font-semibold">{record.terminus.label}</span>
               </div>
-              <p className="font-mono text-[11.5px] break-all text-muted-foreground">{record.terminus.address}</p>
-              <p className="text-xs leading-relaxed text-foreground/85">{record.terminus.statement}</p>
+              <p className="font-mono text-[11.5px] break-all text-muted-foreground">
+                {record.terminus.address}
+              </p>
+              <p className="text-xs leading-relaxed text-foreground/85">
+                {record.terminus.statement}
+              </p>
             </div>
           </Panel>
 
@@ -263,23 +315,49 @@ function CaseWorkspaceBody({
                       <Field label="Asset" value={`${live.freeze.standard} ${live.freeze.asset}`} />
                       <Field label="Issuer" value={live.freeze.issuer} />
                       <Field label="Amount immobilised" value={live.freeze.amountToken} mono />
-                      <Field label="Target address" value={shortAddress(live.freeze.address, 12, 8)} mono />
+                      <Field
+                        label="Target address"
+                        value={shortAddress(live.freeze.address, 12, 8)}
+                        mono
+                      />
                       <Field label="Declared exposure" value={formatInr(live.freeze.amountInr)} />
                     </div>
                     <div className="rounded-md border border-border bg-surface-raised px-3 py-2">
                       <SectionLabel>Transaction summary</SectionLabel>
                       <dl className="mt-1.5 grid gap-2 sm:grid-cols-2">
                         <Field label="Transfer hash" value={live.freeze.tx.tx_hash} mono />
-                        <Field label="Token contract" value={live.freeze.tx.token_contract ?? "—"} mono />
-                        <Field label="From" value={shortAddress(live.freeze.tx.from_address, 10, 6)} mono />
-                        <Field label="To" value={shortAddress(live.freeze.tx.to_address, 10, 6)} mono />
-                        <Field label="Value" value={`${live.freeze.tx.value.toLocaleString("en-US", { maximumFractionDigits: 2 })} ${live.freeze.asset}`} mono />
-                        <Field label="Transfer time" value={formatDateTime(live.freeze.tx.timestamp)} />
+                        <Field
+                          label="Token contract"
+                          value={live.freeze.tx.token_contract ?? "—"}
+                          mono
+                        />
+                        <Field
+                          label="From"
+                          value={shortAddress(live.freeze.tx.from_address, 10, 6)}
+                          mono
+                        />
+                        <Field
+                          label="To"
+                          value={shortAddress(live.freeze.tx.to_address, 10, 6)}
+                          mono
+                        />
+                        <Field
+                          label="Value"
+                          value={`${live.freeze.tx.value.toLocaleString("en-US", { maximumFractionDigits: 2 })} ${live.freeze.asset}`}
+                          mono
+                        />
+                        <Field
+                          label="Transfer time"
+                          value={formatDateTime(live.freeze.tx.timestamp)}
+                        />
                       </dl>
                       <p className="mt-2 text-[11px] leading-relaxed text-foreground/85">
-                        {record.edges.length} classified hops from {shortAddress(record.suspectAddress, 10, 6)} to{" "}
-                        {live.freeze.address === record.terminus.address ? record.terminus.label : "the flagged address"}.
-                        Requested {formatDateTime(live.freeze.requestedAt)}.{" "}
+                        {record.edges.length} classified hops from{" "}
+                        {shortAddress(record.suspectAddress, 10, 6)} to{" "}
+                        {live.freeze.address === record.terminus.address
+                          ? record.terminus.label
+                          : "the flagged address"}
+                        . Requested {formatDateTime(live.freeze.requestedAt)}.{" "}
                         {live.freeze.status === "frozen"
                           ? `Issuer confirmed the blacklist call at ${formatDateTime(live.freeze.confirmedAt!)} — balance immobilised pending court direction.`
                           : "Awaiting issuer confirmation — the timeline updates the moment it lands."}
@@ -306,7 +384,9 @@ function CaseWorkspaceBody({
                   <Chip tone={SEVERITY_TONE[f.severity]}>{f.severity}</Chip>
                   <div className="min-w-0">
                     <p className="text-xs font-semibold">{f.title}</p>
-                    <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{f.detail}</p>
+                    <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                      {f.detail}
+                    </p>
                     <p className="mt-1 font-mono text-[10px] text-muted-foreground">{f.source}</p>
                   </div>
                 </li>
@@ -318,12 +398,18 @@ function CaseWorkspaceBody({
 
       <div className="grid gap-6 xl:grid-cols-[1.4fr_1fr]">
         <Panel>
-          <PanelHeader title="Case timeline" subtitle={`${timeline.length} entries · every engine action and officer decision, audit-logged`} />
+          <PanelHeader
+            title="Case timeline"
+            subtitle={`${timeline.length} entries · every engine action and officer decision, audit-logged`}
+          />
           <ol className="space-y-0 p-4">
             {timeline.map((t, i) => (
               <li key={t.at + t.title} className="relative flex gap-4 pb-5 last:pb-0">
                 {i < timeline.length - 1 ? (
-                  <span className="absolute top-4 left-[7px] h-full w-px bg-border" aria-hidden="true" />
+                  <span
+                    className="absolute top-4 left-[7px] h-full w-px bg-border"
+                    aria-hidden="true"
+                  />
                 ) : null}
                 <span className="relative z-10 mt-1.5 h-3.5 w-3.5 shrink-0 rounded-full border-2 border-primary bg-background" />
                 <div className="min-w-0">
@@ -333,7 +419,9 @@ function CaseWorkspaceBody({
                       {t.phase}
                     </Chip>
                   </div>
-                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{t.detail}</p>
+                  <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                    {t.detail}
+                  </p>
                   <p className="mt-1 font-mono text-[10px] text-muted-foreground">
                     {formatDateTime(t.at)} · {t.actor}
                   </p>
@@ -345,17 +433,27 @@ function CaseWorkspaceBody({
 
         <div className="space-y-6">
           <Panel>
-            <PanelHeader title="Cross-case links" subtitle="cross_case.py — persistent knowledge graph" />
+            <PanelHeader
+              title="Cross-case links"
+              subtitle="cross_case.py — persistent knowledge graph"
+            />
             <div className="p-4">
               {record.linkedCases.length ? (
                 <ul className="space-y-2">
                   {record.linkedCases.map((id) => {
                     const known = allCases.some((c) => c.id === id);
                     return (
-                      <li key={id} className="flex items-center justify-between gap-3 rounded-md border border-border bg-surface-raised px-3 py-2">
+                      <li
+                        key={id}
+                        className="flex items-center justify-between gap-3 rounded-md border border-border bg-surface-raised px-3 py-2"
+                      >
                         <span className="font-mono text-xs">{id}</span>
                         {known ? (
-                          <Link to="/cases/$caseId" params={{ caseId: id }} className="text-[11px] font-semibold text-primary hover:underline">
+                          <Link
+                            to="/cases/$caseId"
+                            params={{ caseId: id }}
+                            className="text-[11px] font-semibold text-primary hover:underline"
+                          >
                             Open case
                           </Link>
                         ) : (
@@ -374,11 +472,16 @@ function CaseWorkspaceBody({
           </Panel>
 
           <Panel>
-            <PanelHeader title="Scope disclosures for this case" subtitle="Stated in the report, not buried" />
+            <PanelHeader
+              title="Scope disclosures for this case"
+              subtitle="Stated in the report, not buried"
+            />
             <ul className="divide-y divide-border">
               {record.scopeNotes.map((n) => (
                 <li key={n.note} className="flex items-start gap-3 px-4 py-3">
-                  <Chip tone={n.tier === 1 ? "success" : n.tier === 2 ? "warning" : "muted"}>Tier {n.tier}</Chip>
+                  <Chip tone={n.tier === 1 ? "success" : n.tier === 2 ? "warning" : "muted"}>
+                    Tier {n.tier}
+                  </Chip>
                   <p className="text-[11px] leading-relaxed text-foreground/85">{n.note}</p>
                 </li>
               ))}

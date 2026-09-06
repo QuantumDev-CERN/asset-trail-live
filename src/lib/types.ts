@@ -30,11 +30,7 @@ export type NodeKind =
 export type ConfidenceBand = "High" | "Medium" | "Low" | "Flagged-Mixer";
 
 export type ScenarioKey =
-  | "exchange-inflow"
-  | "mixer-detection"
-  | "tumbler-routing"
-  | "advanced-typologies"
-  | "dead-end";
+  "exchange-inflow" | "mixer-detection" | "tumbler-routing" | "advanced-typologies" | "dead-end";
 
 export type Tier = 1 | 2 | 3;
 

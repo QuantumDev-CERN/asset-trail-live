@@ -1,6 +1,12 @@
 import { useMemo, useState } from "react";
 import type { CaseRecord, GraphEdge, GraphNode } from "@/lib/types";
-import { CHAIN_TICKER, HOP_CLASS_LABEL, NODE_KIND_LABEL, nodeColorVar, shortAddress } from "@/lib/format";
+import {
+  CHAIN_TICKER,
+  HOP_CLASS_LABEL,
+  NODE_KIND_LABEL,
+  nodeColorVar,
+  shortAddress,
+} from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 const COL = 250;
@@ -76,7 +82,15 @@ export function FlowGraph({
         aria-label={`Fund-flow graph for case ${record.id}`}
       >
         <defs>
-          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <marker
+            id="arrow"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="6"
+            markerHeight="6"
+            orient="auto-start-reverse"
+          >
             <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
           </marker>
         </defs>
@@ -175,7 +189,14 @@ export function FlowGraph({
                 strokeWidth={selected ? 2.2 : 1}
               />
               <rect width={4} height={NODE_H} rx={2} fill={color} />
-              <text x={16} y={22} fill={color} fontSize={10} className="font-mono" letterSpacing={0.6}>
+              <text
+                x={16}
+                y={22}
+                fill={color}
+                fontSize={10}
+                className="font-mono"
+                letterSpacing={0.6}
+              >
                 {NODE_KIND_LABEL[n.kind].toUpperCase()}
               </text>
               <text x={16} y={41} fill="var(--foreground)" fontSize={12} className="font-mono">
@@ -186,8 +207,23 @@ export function FlowGraph({
               </text>
               {n.riskScore > 0 ? (
                 <>
-                  <rect x={NODE_W - 42} y={48} width={30} height={14} rx={7} fill={color} fillOpacity={0.16} />
-                  <text x={NODE_W - 27} y={58} textAnchor="middle" fill={color} fontSize={9} className="font-mono">
+                  <rect
+                    x={NODE_W - 42}
+                    y={48}
+                    width={30}
+                    height={14}
+                    rx={7}
+                    fill={color}
+                    fillOpacity={0.16}
+                  />
+                  <text
+                    x={NODE_W - 27}
+                    y={58}
+                    textAnchor="middle"
+                    fill={color}
+                    fontSize={9}
+                    className="font-mono"
+                  >
                     r{n.riskScore}
                   </text>
                 </>
@@ -213,14 +249,25 @@ export function GraphLegend({ className }: { className?: string }) {
   return (
     <div className={cn("flex flex-wrap items-center gap-x-4 gap-y-2", className)}>
       {items.map((i) => (
-        <span key={i.label} className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
+        <span
+          key={i.label}
+          className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground"
+        >
           <span className="h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: i.color }} />
           {i.label}
         </span>
       ))}
       <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground">
         <svg width="22" height="6" aria-hidden="true">
-          <line x1="0" y1="3" x2="22" y2="3" stroke="var(--muted-foreground)" strokeWidth="1.6" strokeDasharray="5 4" />
+          <line
+            x1="0"
+            y1="3"
+            x2="22"
+            y2="3"
+            stroke="var(--muted-foreground)"
+            strokeWidth="1.6"
+            strokeDasharray="5 4"
+          />
         </svg>
         Probabilistic / weak-signal hop
       </span>

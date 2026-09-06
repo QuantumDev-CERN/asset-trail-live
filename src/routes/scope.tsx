@@ -14,7 +14,8 @@ export const Route = createFileRoute("/scope")({
       { property: "og:title", content: "Scope, Limits & Disclosures — VASP Attribution Engine" },
       {
         property: "og:description",
-        content: "Explicit capability tiers, probabilistic disclosures and out-of-scope boundaries for the attribution engine.",
+        content:
+          "Explicit capability tiers, probabilistic disclosures and out-of-scope boundaries for the attribution engine.",
       },
     ],
   }),
@@ -68,24 +69,30 @@ function ScopePage() {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Scope, limits &amp; disclosures</h1>
         <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-          This is defensive compliance tooling for authorised investigators. Stating the boundaries plainly is part
-          of the design: an evidentiary tool that overclaims is worse than one that admits what it cannot see.
+          This is defensive compliance tooling for authorised investigators. Stating the boundaries
+          plainly is part of the design: an evidentiary tool that overclaims is worse than one that
+          admits what it cannot see.
         </p>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <DisclosureNote title="Not an evasion tool" tone="destructive">
-          Nothing in this console is intended to help anyone avoid detection. It exists to shorten the path from a
-          suspect wallet to a legally-addressable custodian, under case-scoped access and a full audit trail.
+          Nothing in this console is intended to help anyone avoid detection. It exists to shorten
+          the path from a suspect wallet to a legally-addressable custodian, under case-scoped
+          access and a full audit trail.
         </DisclosureNote>
         <DisclosureNote title="Leads, not proof">
-          Every attribution is a probabilistic investigative lead with a disclosed confidence band and a
-          human-readable reason string. Address attribution is not proof of ownership or of criminal conduct.
+          Every attribution is a probabilistic investigative lead with a disclosed confidence band
+          and a human-readable reason string. Address attribution is not proof of ownership or of
+          criminal conduct.
         </DisclosureNote>
       </div>
 
       <Panel>
-        <PanelHeader title="Out of scope — stated upfront" subtitle="These boundaries are permanent, not backlog items" />
+        <PanelHeader
+          title="Out of scope — stated upfront"
+          subtitle="These boundaries are permanent, not backlog items"
+        />
         <ul className="divide-y divide-border">
           {[
             {
@@ -160,7 +167,9 @@ function ScopePage() {
                   <td className="px-4 py-2.5 font-mono">{e.path}</td>
                   <td className="px-4 py-2.5 text-muted-foreground">{e.purpose}</td>
                   <td className="px-4 py-2.5">
-                    <Chip tone={e.wired ? "success" : "muted"}>{e.wired ? "wired" : "planned"}</Chip>
+                    <Chip tone={e.wired ? "success" : "muted"}>
+                      {e.wired ? "wired" : "planned"}
+                    </Chip>
                   </td>
                 </tr>
               ))}
@@ -170,7 +179,7 @@ function ScopePage() {
         <div className="border-t border-border p-4">
           <SectionLabel>Canonical transaction schema</SectionLabel>
           <pre className="mt-2 overflow-x-auto rounded-md border border-border bg-surface-raised p-3 font-mono text-[11px] leading-relaxed text-foreground/85">
-{`{
+            {`{
   "tx_hash": "string",
   "chain": "ethereum | tron | bitcoin | bnb | polygon | solana",
   "from_address": "string",
@@ -185,8 +194,9 @@ function ScopePage() {
 }`}
           </pre>
           <p className="mt-2 text-[11px] text-muted-foreground">
-            Every chain adapter emits exactly this shape. The graph engine, hop classifier and confidence model
-            never see raw chain-specific responses — that is what keeps them chain-agnostic.
+            Every chain adapter emits exactly this shape. The graph engine, hop classifier and
+            confidence model never see raw chain-specific responses — that is what keeps them
+            chain-agnostic.
           </p>
         </div>
       </Panel>

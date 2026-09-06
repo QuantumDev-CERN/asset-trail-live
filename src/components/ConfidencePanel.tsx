@@ -20,7 +20,10 @@ export function ConfidencePanel({ record }: { record: CaseRecord }) {
       <div className="flex items-end justify-between gap-4">
         <div>
           <SectionLabel>Attribution confidence</SectionLabel>
-          <p className="mt-1 font-mono text-4xl leading-none font-semibold" style={{ color: barColor }}>
+          <p
+            className="mt-1 font-mono text-4xl leading-none font-semibold"
+            style={{ color: barColor }}
+          >
             {confidence.score}
             <span className="text-base text-muted-foreground">/100</span>
           </p>
@@ -42,7 +45,9 @@ export function ConfidencePanel({ record }: { record: CaseRecord }) {
 
       <div className="rounded-md border border-border bg-surface-raised px-3 py-2.5">
         <SectionLabel>Reason string</SectionLabel>
-        <p className="mt-1.5 font-mono text-[11.5px] leading-relaxed text-foreground/90">{confidence.reason}</p>
+        <p className="mt-1.5 font-mono text-[11.5px] leading-relaxed text-foreground/90">
+          {confidence.reason}
+        </p>
       </div>
 
       <div>
@@ -53,7 +58,12 @@ export function ConfidencePanel({ record }: { record: CaseRecord }) {
               <span
                 className="mt-0.5 shrink-0 font-mono text-xs font-semibold"
                 style={{
-                  color: b.adjustment > 0 ? "var(--success)" : b.adjustment < 0 ? "var(--destructive)" : "var(--muted-foreground)",
+                  color:
+                    b.adjustment > 0
+                      ? "var(--success)"
+                      : b.adjustment < 0
+                        ? "var(--destructive)"
+                        : "var(--muted-foreground)",
                 }}
               >
                 {b.adjustment > 0 ? "+" : ""}
@@ -61,7 +71,9 @@ export function ConfidencePanel({ record }: { record: CaseRecord }) {
               </span>
               <span className="min-w-0">
                 <span className="block text-xs font-medium text-foreground">{b.signal}</span>
-                <span className="mt-0.5 block text-[11px] leading-relaxed text-muted-foreground">{b.note}</span>
+                <span className="mt-0.5 block text-[11px] leading-relaxed text-muted-foreground">
+                  {b.note}
+                </span>
               </span>
             </li>
           ))}
@@ -70,14 +82,15 @@ export function ConfidencePanel({ record }: { record: CaseRecord }) {
 
       {capped ? (
         <DisclosureNote title="Band hard-capped" tone="destructive">
-          A known mixer contract sits on this path. Per the scoring model the band is reported separately as
-          Flagged-Mixer and is never blended into a High or Medium attribution claim, whatever the numeric score.
+          A known mixer contract sits on this path. Per the scoring model the band is reported
+          separately as Flagged-Mixer and is never blended into a High or Medium attribution claim,
+          whatever the numeric score.
         </DisclosureNote>
       ) : null}
 
       <p className="text-[11px] leading-relaxed text-muted-foreground">
-        Scoring is rule-based and explainable by design — not machine-learned — because this output is intended to
-        be defensible as evidence.
+        Scoring is rule-based and explainable by design — not machine-learned — because this output
+        is intended to be defensible as evidence.
       </p>
     </div>
   );

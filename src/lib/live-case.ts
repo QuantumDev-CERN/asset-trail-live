@@ -90,9 +90,10 @@ export function useLiveTick(): number {
   );
 }
 
-
 function hex(n: number): string {
-  return Array.from({ length: n }, () => "0123456789ABCDEF"[Math.floor(Math.random() * 16)]).join("");
+  return Array.from({ length: n }, () => "0123456789ABCDEF"[Math.floor(Math.random() * 16)]).join(
+    "",
+  );
 }
 
 export function newJobId(): string {
@@ -103,14 +104,7 @@ function ev(actor: string, phase: string, title: string, detail: string): Timeli
   return { at: new Date().toISOString(), actor, phase, title, detail };
 }
 
-const HOP_PHASE = [
-  "ingest",
-  "normalise",
-  "classify",
-  "label-lookup",
-  "score",
-  "terminus",
-] as const;
+const HOP_PHASE = ["ingest", "normalise", "classify", "label-lookup", "score", "terminus"] as const;
 
 /** Runs the trace as a timed sequence so a live audience can watch it resolve. */
 export function startTrace(record: CaseRecord, jobId = newJobId(), stepMs = 1100) {
@@ -265,7 +259,7 @@ export function executeFreeze(record: CaseRecord) {
         `${record.officer} · ${record.agency}`,
         "parallel-action",
         `Immediate freeze requested — ${detected.standard} ${detected.asset} detected`,
-          `Issuer-level freeze request ${reference} sent to ${detected.issuer} for ${detected.address} (${detected.amountToken}), on ${detected.standard} transfer ${detected.tx.tx_hash}. Runs alongside, not instead of, the VASP disclosure route.`,
+        `Issuer-level freeze request ${reference} sent to ${detected.issuer} for ${detected.address} (${detected.amountToken}), on ${detected.standard} transfer ${detected.tx.tx_hash}. Runs alongside, not instead of, the VASP disclosure route.`,
       ),
     ],
   });

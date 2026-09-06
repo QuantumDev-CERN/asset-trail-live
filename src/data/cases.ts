@@ -28,14 +28,16 @@ export const SCENARIOS: {
   {
     key: "mixer-detection",
     name: "Mixer Detection",
-    blurb: "Funds enter a Tornado Cash pool. Proximity is flagged; no deterministic unmixing is claimed.",
+    blurb:
+      "Funds enter a Tornado Cash pool. Proximity is flagged; no deterministic unmixing is claimed.",
     typology: "Mixer / tumbler proximity",
     tier: 1,
   },
   {
     key: "tumbler-routing",
     name: "Tumbler Routing",
-    blurb: "Post-mix best-effort re-acquisition via anonymity-set timing and gas-funding self-link.",
+    blurb:
+      "Post-mix best-effort re-acquisition via anonymity-set timing and gas-funding self-link.",
     typology: "Probabilistic mixer correlation",
     tier: 2,
   },
@@ -49,7 +51,8 @@ export const SCENARIOS: {
   {
     key: "dead-end",
     name: "Endpoint / Dead-End",
-    blurb: "Many small disparate deposits, no onward movement — OTC/hawala terminus, not a failed trace.",
+    blurb:
+      "Many small disparate deposits, no onward movement — OTC/hawala terminus, not a failed trace.",
     typology: "OTC / hawala cash-out terminus",
     tier: 2,
   },
@@ -129,7 +132,8 @@ const c1Nodes: GraphNode[] = [
     firstSeen: "2026-08-11T05:02:33Z",
     lastSeen: "2026-09-03T02:10:12Z",
     txCount: 118,
-    notes: "Consolidation wallet. Fans in from 6 sibling collector addresses across the same FIR cluster.",
+    notes:
+      "Consolidation wallet. Fans in from 6 sibling collector addresses across the same FIR cluster.",
     tags: ["consolidator", "cluster-member"],
   },
   {
@@ -167,7 +171,8 @@ const c1Nodes: GraphNode[] = [
     travelRule: "TRP — participating",
     legalInstrument: "SAHYOG, escalate via Egmont FIU channel",
     complianceContact: "le-requests@binance.example",
-    notes: "First legally-addressable custodial node on this path. Deposit-address mapping requested.",
+    notes:
+      "First legally-addressable custodial node on this path. Deposit-address mapping requested.",
     tags: ["vasp", "custodial", "fiu-registered"],
   },
 ];
@@ -428,7 +433,8 @@ const c3Nodes: GraphNode[] = [
     travelRule: "Sygna Bridge — participating",
     legalInstrument: "SAHYOG (registered entity)",
     complianceContact: "le@kucoin.example",
-    notes: "Candidate terminus. Disclosure request must state the probabilistic basis of the preceding hop.",
+    notes:
+      "Candidate terminus. Disclosure request must state the probabilistic basis of the preceding hop.",
     tags: ["vasp", "custodial", "fiu-registered"],
   },
 ];
@@ -538,7 +544,8 @@ const c4Nodes: GraphNode[] = [
     hop: 1,
     lane: 1,
     riskScore: 44,
-    notes: "Peeled output, 0.018 BTC. Queued as a separate low-priority branch, not followed on the primary path.",
+    notes:
+      "Peeled output, 0.018 BTC. Queued as a separate low-priority branch, not followed on the primary path.",
     tags: ["peeled-output", "queued-branch"],
   },
   {
@@ -565,7 +572,8 @@ const c4Nodes: GraphNode[] = [
     hop: 3,
     lane: 0,
     riskScore: 38,
-    notes: "Swap event decoded from the router log: WETH → USDT. Trace continues on the output token.",
+    notes:
+      "Swap event decoded from the router log: WETH → USDT. Trace continues on the output token.",
     tags: ["dex-swap", "token-identity-change"],
   },
   {
@@ -796,7 +804,8 @@ const c5Nodes: GraphNode[] = [
     riskScore: 70,
     balance: "0 USDT",
     txCount: 214,
-    notes: "Layering wallet. Splits into 30–60 small transfers per day, all under ₹50,000 equivalent.",
+    notes:
+      "Layering wallet. Splits into 30–60 small transfers per day, all under ₹50,000 equivalent.",
     tags: ["structuring", "smurfing"],
   },
   {
@@ -893,11 +902,24 @@ export const CASES: CaseRecord[] = [
     confidence: {
       score: 95,
       band: "High",
-      reason: "3 hops (−20) | passed through confirmed sweep (+15) | base direct-deposit attribution (+90), capped at 100",
+      reason:
+        "3 hops (−20) | passed through confirmed sweep (+15) | base direct-deposit attribution (+90), capped at 100",
       breakdown: [
-        bd("Base attribution to labelled VASP address", 90, "Terminal address matches vasp_labels.json — Binance: Hot Wallet 6."),
-        bd("Additional hops before VASP (2 × −10)", -20, "Hops 2 and 3 each incur the standard per-hop discount."),
-        bd("Confirmed sweep-linked address", 15, "sweep_detector.py observed a many-in/single-out sweep and back-labelled inputs."),
+        bd(
+          "Base attribution to labelled VASP address",
+          90,
+          "Terminal address matches vasp_labels.json — Binance: Hot Wallet 6.",
+        ),
+        bd(
+          "Additional hops before VASP (2 × −10)",
+          -20,
+          "Hops 2 and 3 each incur the standard per-hop discount.",
+        ),
+        bd(
+          "Confirmed sweep-linked address",
+          15,
+          "sweep_detector.py observed a many-in/single-out sweep and back-labelled inputs.",
+        ),
         bd("Cross-case corroboration", 10, "Consolidator address previously seen in FIR-2023-001."),
       ],
     },
@@ -913,48 +935,100 @@ export const CASES: CaseRecord[] = [
         id: "rf1",
         severity: "high",
         title: "Rapid forwarding pattern",
-        detail: "Median dwell time at each hop is under 9 minutes — consistent with an automated layering script.",
+        detail:
+          "Median dwell time at each hop is under 9 minutes — consistent with an automated layering script.",
         source: "Risk scoring engine — behaviour pattern",
       },
       {
         id: "rf2",
         severity: "medium",
         title: "Cluster overlap with prior FIR",
-        detail: "Hop-1 consolidator appeared in FIR-2023-001 (Hyderabad). Possible shared syndicate infrastructure.",
+        detail:
+          "Hop-1 consolidator appeared in FIR-2023-001 (Hyderabad). Possible shared syndicate infrastructure.",
         source: "cross_case.py",
       },
       {
         id: "rf3",
         severity: "info",
         title: "CREATE2 proxy deposit contract",
-        detail: "Deposit address is a counterfactual proxy; exchange can map it to an account holder on request.",
+        detail:
+          "Deposit address is a counterfactual proxy; exchange can map it to an account holder on request.",
         source: "sweep_detector.py",
       },
     ],
     linkedCases: ["FIR-2023-001"],
     freezeRecommendation: null,
     timeline: [
-      { at: "2026-09-03T06:14:00Z", actor: "SAHYOG (stub)", phase: "Intake", title: "Case received", detail: "Suspect address submitted with FIR 0114/2026. Job ID JOB-7F2A91C4 returned." },
-      { at: "2026-09-03T06:14:22Z", actor: "cross_case.py", phase: "Enrichment", title: "Cross-case check", detail: "One prior appearance found: FIR-2023-001." },
-      { at: "2026-09-03T06:16:40Z", actor: "eth_adapter.py", phase: "Ingestion", title: "Chain data pulled", detail: "412 transactions normalised from Etherscan into the canonical schema." },
-      { at: "2026-09-03T06:17:05Z", actor: "hop_classifier.py", phase: "Classification", title: "Edges tagged", detail: "2 direct-transfer, 1 sweep-candidate." },
-      { at: "2026-09-03T06:17:31Z", actor: "sweep_detector.py", phase: "Classification", title: "Sweep confirmed", detail: "Many-in/single-out into Binance: Hot Wallet 6. Six contributing addresses back-labelled." },
-      { at: "2026-09-03T06:17:44Z", actor: "confidence_scoring.py", phase: "Scoring", title: "Confidence 95 — High", detail: "Reason string emitted with per-signal breakdown." },
-      { at: "2026-09-05T13:24:00Z", actor: "Insp. R. Nagaraj", phase: "Action", title: "Disclosure drafted", detail: "SAHYOG disclosure request generated for Binance nodal officer, pending sign-off." },
+      {
+        at: "2026-09-03T06:14:00Z",
+        actor: "SAHYOG (stub)",
+        phase: "Intake",
+        title: "Case received",
+        detail: "Suspect address submitted with FIR 0114/2026. Job ID JOB-7F2A91C4 returned.",
+      },
+      {
+        at: "2026-09-03T06:14:22Z",
+        actor: "cross_case.py",
+        phase: "Enrichment",
+        title: "Cross-case check",
+        detail: "One prior appearance found: FIR-2023-001.",
+      },
+      {
+        at: "2026-09-03T06:16:40Z",
+        actor: "eth_adapter.py",
+        phase: "Ingestion",
+        title: "Chain data pulled",
+        detail: "412 transactions normalised from Etherscan into the canonical schema.",
+      },
+      {
+        at: "2026-09-03T06:17:05Z",
+        actor: "hop_classifier.py",
+        phase: "Classification",
+        title: "Edges tagged",
+        detail: "2 direct-transfer, 1 sweep-candidate.",
+      },
+      {
+        at: "2026-09-03T06:17:31Z",
+        actor: "sweep_detector.py",
+        phase: "Classification",
+        title: "Sweep confirmed",
+        detail:
+          "Many-in/single-out into Binance: Hot Wallet 6. Six contributing addresses back-labelled.",
+      },
+      {
+        at: "2026-09-03T06:17:44Z",
+        actor: "confidence_scoring.py",
+        phase: "Scoring",
+        title: "Confidence 95 — High",
+        detail: "Reason string emitted with per-signal breakdown.",
+      },
+      {
+        at: "2026-09-05T13:24:00Z",
+        actor: "Insp. R. Nagaraj",
+        phase: "Action",
+        title: "Disclosure drafted",
+        detail: "SAHYOG disclosure request generated for Binance nodal officer, pending sign-off.",
+      },
     ],
     disclosure: {
       vasp: "Binance",
       jurisdiction: "Offshore, re-registered with FIU-IND",
-      instrument: "SAHYOG portal request under PMLA s.12AA; escalation via Egmont Group FIU-to-FIU channel if unanswered in 10 days",
+      instrument:
+        "SAHYOG portal request under PMLA s.12AA; escalation via Egmont Group FIU-to-FIU channel if unanswered in 10 days",
       travelRule: "TRP — participating (originator/beneficiary data may be cited)",
       fiuRegistered: true,
       contact: "le-requests@binance.example",
-      body:
-        "Requesting KYC records, account statements and deposit-address mapping for the account associated with deposit address 0x00fe78205f5f0e63b8ad2b2ae5337f538a610e04, which swept 7.41 ETH into hot wallet 0x8894e0a0c962cb723c1976a4421c95949be2d4e3 on 2026-09-03T02:44:11Z (tx 0x904afa50…d6ed8b3f). Attribution confidence 95 (High). Supporting evidentiary certificate attached under BSA s.63.",
+      body: "Requesting KYC records, account statements and deposit-address mapping for the account associated with deposit address 0x00fe78205f5f0e63b8ad2b2ae5337f538a610e04, which swept 7.41 ETH into hot wallet 0x8894e0a0c962cb723c1976a4421c95949be2d4e3 on 2026-09-03T02:44:11Z (tx 0x904afa50…d6ed8b3f). Attribution confidence 95 (High). Supporting evidentiary certificate attached under BSA s.63.",
     },
     scopeNotes: [
-      { tier: 1, note: "Ethereum adapter is live against Etherscan. Every hop shown was pulled from chain data, not synthesised." },
-      { tier: 1, note: "Sweep detection and retroactive back-labelling run on real transaction patterns." },
+      {
+        tier: 1,
+        note: "Ethereum adapter is live against Etherscan. Every hop shown was pulled from chain data, not synthesised.",
+      },
+      {
+        tier: 1,
+        note: "Sweep detection and retroactive back-labelling run on real transaction patterns.",
+      },
     ],
     cert: {
       hash: "9f2c41ab77e0d3b58c1e6a49f0b27d3ce8145a90bb6f2d47e39c05a81d7f6b32",
@@ -983,11 +1057,24 @@ export const CASES: CaseRecord[] = [
     confidence: {
       score: 0,
       band: "Flagged-Mixer",
-      reason: "passed through known mixer contract (−60, hard cap) | terminal state unresolved — not scored as a low-confidence VASP attribution",
+      reason:
+        "passed through known mixer contract (−60, hard cap) | terminal state unresolved — not scored as a low-confidence VASP attribution",
       breakdown: [
-        bd("Known mixer contract on path", -60, "Tornado Cash 10 ETH pool, OFAC SDN listed. Caps the band at Flagged-Mixer."),
-        bd("No labelled VASP reached", 0, "No custodial terminus on the traced path — output is 'unresolved', per §8."),
-        bd("Sanctions proximity", 0, "Recorded as a risk signal, deliberately not folded into the attribution score."),
+        bd(
+          "Known mixer contract on path",
+          -60,
+          "Tornado Cash 10 ETH pool, OFAC SDN listed. Caps the band at Flagged-Mixer.",
+        ),
+        bd(
+          "No labelled VASP reached",
+          0,
+          "No custodial terminus on the traced path — output is 'unresolved', per §8.",
+        ),
+        bd(
+          "Sanctions proximity",
+          0,
+          "Recorded as a risk signal, deliberately not folded into the attribution score.",
+        ),
       ],
     },
     terminus: {
@@ -1002,14 +1089,16 @@ export const CASES: CaseRecord[] = [
         id: "rf4",
         severity: "critical",
         title: "OFAC-sanctioned contract interaction",
-        detail: "Direct deposit into an SDN-listed mixer. Independent sanctions-exposure reporting obligation may apply.",
+        detail:
+          "Direct deposit into an SDN-listed mixer. Independent sanctions-exposure reporting obligation may apply.",
         source: "OFAC SDN address list",
       },
       {
         id: "rf5",
         severity: "critical",
         title: "Ransomware attribution",
-        detail: "Origin address matches the ransomwhe.re open payment dataset for an active ransomware family.",
+        detail:
+          "Origin address matches the ransomwhe.re open payment dataset for an active ransomware family.",
         source: "ransomwhe.re",
       },
       {
@@ -1023,16 +1112,52 @@ export const CASES: CaseRecord[] = [
     linkedCases: [],
     freezeRecommendation: null,
     timeline: [
-      { at: "2026-08-30T10:02:00Z", actor: "SAHYOG (stub)", phase: "Intake", title: "Case received", detail: "Job ID JOB-B21D9E70 returned to the submitting agency." },
-      { at: "2026-08-30T10:04:12Z", actor: "eth_adapter.py", phase: "Ingestion", title: "Chain data pulled", detail: "27 transactions normalised." },
-      { at: "2026-08-30T10:04:50Z", actor: "hop_classifier.py", phase: "Classification", title: "Mixer deposit tagged", detail: "deposit() call matched mixer_contracts.json." },
-      { at: "2026-08-30T10:05:02Z", actor: "confidence_scoring.py", phase: "Scoring", title: "Band forced to Flagged-Mixer", detail: "Score withheld from the VASP confidence channel by design." },
-      { at: "2026-09-05T08:11:00Z", actor: "DySP A. Kulkarni", phase: "Action", title: "Escalated to watchlist", detail: "Origin address added to the watchlist subsystem for onward-movement alerting." },
+      {
+        at: "2026-08-30T10:02:00Z",
+        actor: "SAHYOG (stub)",
+        phase: "Intake",
+        title: "Case received",
+        detail: "Job ID JOB-B21D9E70 returned to the submitting agency.",
+      },
+      {
+        at: "2026-08-30T10:04:12Z",
+        actor: "eth_adapter.py",
+        phase: "Ingestion",
+        title: "Chain data pulled",
+        detail: "27 transactions normalised.",
+      },
+      {
+        at: "2026-08-30T10:04:50Z",
+        actor: "hop_classifier.py",
+        phase: "Classification",
+        title: "Mixer deposit tagged",
+        detail: "deposit() call matched mixer_contracts.json.",
+      },
+      {
+        at: "2026-08-30T10:05:02Z",
+        actor: "confidence_scoring.py",
+        phase: "Scoring",
+        title: "Band forced to Flagged-Mixer",
+        detail: "Score withheld from the VASP confidence channel by design.",
+      },
+      {
+        at: "2026-09-05T08:11:00Z",
+        actor: "DySP A. Kulkarni",
+        phase: "Action",
+        title: "Escalated to watchlist",
+        detail: "Origin address added to the watchlist subsystem for onward-movement alerting.",
+      },
     ],
     disclosure: null,
     scopeNotes: [
-      { tier: 1, note: "Mixer proximity flagging is live and deterministic — it matches a static contract registry." },
-      { tier: 3, note: "Large-anonymity-set unmixing is out of scope. No vendor can do this with certainty and the engine will not imply otherwise." },
+      {
+        tier: 1,
+        note: "Mixer proximity flagging is live and deterministic — it matches a static contract registry.",
+      },
+      {
+        tier: 3,
+        note: "Large-anonymity-set unmixing is out of scope. No vendor can do this with certainty and the engine will not imply otherwise.",
+      },
     ],
     cert: {
       hash: "3ab8f0517d29c46e0b1a83f5cd702e948b6613afd0e5c27b94a1f83dd0c6e175",
@@ -1064,9 +1189,21 @@ export const CASES: CaseRecord[] = [
       reason:
         "passed through known mixer contract (−60, hard cap) | post-mix continuation by weak correlation only (−25) | 3 hops (−10) | reached labelled VASP (+90)",
       breakdown: [
-        bd("Base attribution to labelled VASP address", 90, "Candidate terminus KuCoin matches vasp_labels.json."),
-        bd("Known mixer contract on path", -60, "Hard cap applies: band is reported as Flagged-Mixer irrespective of the numeric score."),
-        bd("Weak-signal correlation across the mixer", -25, "Timing + denomination + gas-funding self-link only. Not deterministic."),
+        bd(
+          "Base attribution to labelled VASP address",
+          90,
+          "Candidate terminus KuCoin matches vasp_labels.json.",
+        ),
+        bd(
+          "Known mixer contract on path",
+          -60,
+          "Hard cap applies: band is reported as Flagged-Mixer irrespective of the numeric score.",
+        ),
+        bd(
+          "Weak-signal correlation across the mixer",
+          -25,
+          "Timing + denomination + gas-funding self-link only. Not deterministic.",
+        ),
         bd("Hop distance", -10, "Third hop from the suspect address."),
       ],
     },
@@ -1082,37 +1219,77 @@ export const CASES: CaseRecord[] = [
         id: "rf7",
         severity: "critical",
         title: "Mixer on path — attribution capped",
-        detail: "Numeric score of 32 is retained for triage only. The reported band is Flagged-Mixer and never blends into a High/Medium claim.",
+        detail:
+          "Numeric score of 32 is retained for triage only. The reported band is Flagged-Mixer and never blends into a High/Medium claim.",
         source: "confidence_scoring.py",
       },
       {
         id: "rf8",
         severity: "high",
         title: "Gas-funding self-link",
-        detail: "The candidate withdrawal wallet was gas-funded by an address that also funded a pre-mix sibling. Suggestive, not conclusive.",
+        detail:
+          "The candidate withdrawal wallet was gas-funded by an address that also funded a pre-mix sibling. Suggestive, not conclusive.",
         source: "Mixer correlation heuristic",
       },
       {
         id: "rf9",
         severity: "medium",
         title: "Anonymity set 611 at deposit time",
-        detail: "A small set improves correlation odds but does not make the linkage deterministic.",
+        detail:
+          "A small set improves correlation odds but does not make the linkage deterministic.",
         source: "Anonymity-set sizing",
       },
     ],
     linkedCases: ["FIR-2026-014"],
     freezeRecommendation: null,
     timeline: [
-      { at: "2026-08-14T09:00:00Z", actor: "SAHYOG (stub)", phase: "Intake", title: "Case received", detail: "Job ID JOB-1C44E8A2 returned." },
-      { at: "2026-08-14T09:03:00Z", actor: "hop_classifier.py", phase: "Classification", title: "Mixer deposits tagged", detail: "12 × 1 ETH deposits into the Tornado Cash 1 ETH pool." },
-      { at: "2026-08-14T09:11:00Z", actor: "Correlation heuristic", phase: "Analysis", title: "Candidate withdrawal set", detail: "Three weak signals aligned on a single withdrawal cluster. Flagged probabilistic." },
-      { at: "2026-08-14T09:12:20Z", actor: "confidence_scoring.py", phase: "Scoring", title: "Score 32, band Flagged-Mixer", detail: "Cap enforced." },
-      { at: "2026-09-04T17:30:00Z", actor: "ACP S. Deshmukh", phase: "Action", title: "Watchlisted", detail: "Candidate wallet subscribed for onward-movement alerts rather than an immediate disclosure request." },
+      {
+        at: "2026-08-14T09:00:00Z",
+        actor: "SAHYOG (stub)",
+        phase: "Intake",
+        title: "Case received",
+        detail: "Job ID JOB-1C44E8A2 returned.",
+      },
+      {
+        at: "2026-08-14T09:03:00Z",
+        actor: "hop_classifier.py",
+        phase: "Classification",
+        title: "Mixer deposits tagged",
+        detail: "12 × 1 ETH deposits into the Tornado Cash 1 ETH pool.",
+      },
+      {
+        at: "2026-08-14T09:11:00Z",
+        actor: "Correlation heuristic",
+        phase: "Analysis",
+        title: "Candidate withdrawal set",
+        detail: "Three weak signals aligned on a single withdrawal cluster. Flagged probabilistic.",
+      },
+      {
+        at: "2026-08-14T09:12:20Z",
+        actor: "confidence_scoring.py",
+        phase: "Scoring",
+        title: "Score 32, band Flagged-Mixer",
+        detail: "Cap enforced.",
+      },
+      {
+        at: "2026-09-04T17:30:00Z",
+        actor: "ACP S. Deshmukh",
+        phase: "Action",
+        title: "Watchlisted",
+        detail:
+          "Candidate wallet subscribed for onward-movement alerts rather than an immediate disclosure request.",
+      },
     ],
     disclosure: null,
     scopeNotes: [
-      { tier: 2, note: "Post-mixer correlation is best-effort and always disclosed as probabilistic. It is not a claim of unmixing." },
-      { tier: 3, note: "Feedback-loop recalibration from confirmed VASP outcomes is designed but not built." },
+      {
+        tier: 2,
+        note: "Post-mixer correlation is best-effort and always disclosed as probabilistic. It is not a claim of unmixing.",
+      },
+      {
+        tier: 3,
+        note: "Feedback-loop recalibration from confirmed VASP outcomes is designed but not built.",
+      },
     ],
     cert: {
       hash: "c1d90b6f42a875e3018cb2f7ad459e60712c8b3fd0a94e26bb587c1f0e3a94d8",
@@ -1144,12 +1321,32 @@ export const CASES: CaseRecord[] = [
       reason:
         "reached labelled VASP (+90) | 6 hops (−50) | bridge with decoded destination (−5) | swap-service correlation by time+amount (−25) | confirmed sweep at terminus (+15) | cross-chain continuation (−10), floored at 55 by path-quality weighting",
       breakdown: [
-        bd("Base attribution to labelled VASP address", 90, "OKX hot wallet matched in vasp_labels.json (Tronscan tag)."),
+        bd(
+          "Base attribution to labelled VASP address",
+          90,
+          "OKX hot wallet matched in vasp_labels.json (Tronscan tag).",
+        ),
         bd("Hop distance (6 hops)", -50, "Standard per-hop discount across the full path."),
-        bd("Bridge with decoded destination", -5, "Destination parsed from calldata — strong signal, minimal discount."),
-        bd("Non-KYC swap service, weak correlation", -25, "Continuation established by time + amount only."),
-        bd("Confirmed sweep at terminus", 15, "Deposit address swept into the hot wallet 4 minutes after receipt."),
-        bd("Peel-branch isolation", 30, "Change-address classifier followed the dominant branch; the peeled output was queued separately and excluded from scoring."),
+        bd(
+          "Bridge with decoded destination",
+          -5,
+          "Destination parsed from calldata — strong signal, minimal discount.",
+        ),
+        bd(
+          "Non-KYC swap service, weak correlation",
+          -25,
+          "Continuation established by time + amount only.",
+        ),
+        bd(
+          "Confirmed sweep at terminus",
+          15,
+          "Deposit address swept into the hot wallet 4 minutes after receipt.",
+        ),
+        bd(
+          "Peel-branch isolation",
+          30,
+          "Change-address classifier followed the dominant branch; the peeled output was queued separately and excluded from scoring.",
+        ),
       ],
     },
     terminus: {
@@ -1164,21 +1361,24 @@ export const CASES: CaseRecord[] = [
         id: "rf10",
         severity: "high",
         title: "Cross-chain layering",
-        detail: "Three chains and two token identities in six hops — deliberate obfuscation, not ordinary trading behaviour.",
+        detail:
+          "Three chains and two token identities in six hops — deliberate obfuscation, not ordinary trading behaviour.",
         source: "Typology identification",
       },
       {
         id: "rf11",
         severity: "medium",
         title: "Weak-signal hop present",
-        detail: "One hop rests on time+amount correlation through a non-KYC swap service. Confidence discounted accordingly.",
+        detail:
+          "One hop rests on time+amount correlation through a non-KYC swap service. Confidence discounted accordingly.",
         source: "confidence_scoring.py",
       },
       {
         id: "rf12",
         severity: "medium",
         title: "Peeled branch unfollowed",
-        detail: "0.018 BTC peeled output remains queued. Roughly 1.8% of traced value is unaccounted for on this path.",
+        detail:
+          "0.018 BTC peeled output remains queued. Roughly 1.8% of traced value is unaccounted for on this path.",
         source: "Change-address classifier",
       },
       {
@@ -1193,28 +1393,79 @@ export const CASES: CaseRecord[] = [
     freezeRecommendation:
       "PARALLEL ACTION: the terminal leg is held in USDT (TRC-20). An issuer-level freeze request to Tether — invoking addBlackList on the terminal deposit address — can run alongside the OKX disclosure request and typically resolves faster. This is a parallel track, never a replacement for the VASP legal route.",
     timeline: [
-      { at: "2026-08-27T15:20:00Z", actor: "SAHYOG (stub)", phase: "Intake", title: "Case received", detail: "Job ID JOB-9E03BB51 returned." },
-      { at: "2026-08-27T15:26:00Z", actor: "UTXO adapter", phase: "Ingestion", title: "Peel chain reconstructed", detail: "Change-address classifier scored both outputs; dominant branch followed." },
-      { at: "2026-08-27T18:44:00Z", actor: "hop_classifier.py", phase: "Classification", title: "Bridge lock decoded", detail: "Wormhole lock event; destination address recovered from calldata." },
-      { at: "2026-08-28T04:52:00Z", actor: "hop_classifier.py", phase: "Classification", title: "DEX swap decoded", detail: "Uniswap V2 Swap log: WBTC → USDT. Trace continued on the output token." },
-      { at: "2026-08-28T05:40:00Z", actor: "tron_adapter.py", phase: "Ingestion", title: "Tron leg resolved", detail: "USDT-TRC20 transfers normalised into the canonical schema." },
-      { at: "2026-08-28T05:42:00Z", actor: "stablecoin_check.py", phase: "Analysis", title: "Parallel freeze available", detail: "Terminal holdings are USDT — issuer freeze surfaced as a parallel option." },
-      { at: "2026-09-05T11:02:00Z", actor: "Insp. M. Farooqui", phase: "Action", title: "MLAT packet prepared", detail: "Foreign-VASP route selected; Egmont channel noted as fallback." },
+      {
+        at: "2026-08-27T15:20:00Z",
+        actor: "SAHYOG (stub)",
+        phase: "Intake",
+        title: "Case received",
+        detail: "Job ID JOB-9E03BB51 returned.",
+      },
+      {
+        at: "2026-08-27T15:26:00Z",
+        actor: "UTXO adapter",
+        phase: "Ingestion",
+        title: "Peel chain reconstructed",
+        detail: "Change-address classifier scored both outputs; dominant branch followed.",
+      },
+      {
+        at: "2026-08-27T18:44:00Z",
+        actor: "hop_classifier.py",
+        phase: "Classification",
+        title: "Bridge lock decoded",
+        detail: "Wormhole lock event; destination address recovered from calldata.",
+      },
+      {
+        at: "2026-08-28T04:52:00Z",
+        actor: "hop_classifier.py",
+        phase: "Classification",
+        title: "DEX swap decoded",
+        detail: "Uniswap V2 Swap log: WBTC → USDT. Trace continued on the output token.",
+      },
+      {
+        at: "2026-08-28T05:40:00Z",
+        actor: "tron_adapter.py",
+        phase: "Ingestion",
+        title: "Tron leg resolved",
+        detail: "USDT-TRC20 transfers normalised into the canonical schema.",
+      },
+      {
+        at: "2026-08-28T05:42:00Z",
+        actor: "stablecoin_check.py",
+        phase: "Analysis",
+        title: "Parallel freeze available",
+        detail: "Terminal holdings are USDT — issuer freeze surfaced as a parallel option.",
+      },
+      {
+        at: "2026-09-05T11:02:00Z",
+        actor: "Insp. M. Farooqui",
+        phase: "Action",
+        title: "MLAT packet prepared",
+        detail: "Foreign-VASP route selected; Egmont channel noted as fallback.",
+      },
     ],
     disclosure: {
       vasp: "OKX",
       jurisdiction: "Seychelles (not FIU-IND registered)",
-      instrument: "MLAT request (India–Seychelles) with parallel Egmont Group FIU-to-FIU notification",
+      instrument:
+        "MLAT request (India–Seychelles) with parallel Egmont Group FIU-to-FIU notification",
       travelRule: "TRP — participating",
       fiuRegistered: false,
       contact: "lawenforcement@okx.example",
-      body:
-        "Requesting account identification and KYC records for the holder of deposit address TDqSquXBgUCLYvYC4XZgrprLK589dkhSCf, which received 63,940.5 USDT (TRC-20) on 2026-08-28 and was swept into hot wallet TNEvXvQzW37Q7S5v9WzY8Vb9uXnsjwAzwA. Attribution confidence 55 (Medium); one hop on the path rests on time+amount correlation through a non-KYC swap service and is disclosed as a weak signal.",
+      body: "Requesting account identification and KYC records for the holder of deposit address TDqSquXBgUCLYvYC4XZgrprLK589dkhSCf, which received 63,940.5 USDT (TRC-20) on 2026-08-28 and was swept into hot wallet TNEvXvQzW37Q7S5v9WzY8Vb9uXnsjwAzwA. Attribution confidence 55 (Medium); one hop on the path rests on time+amount correlation through a non-KYC swap service and is disclosed as a weak signal.",
     },
     scopeNotes: [
-      { tier: 2, note: "Bitcoin, BNB, Polygon and Solana adapters implement the normalisation contract but are not wired to live APIs in this build. The BTC leg here is replayed from a captured dataset." },
-      { tier: 2, note: "Bridge and swap-service correlation uses a static registry plus time/amount matching. There is no live cross-chain event subscription." },
-      { tier: 3, note: "Graph sharding and pruning at billions-of-edges scale is designed, not built. NetworkX in-memory subgraphs are correct at this scale." },
+      {
+        tier: 2,
+        note: "Bitcoin, BNB, Polygon and Solana adapters implement the normalisation contract but are not wired to live APIs in this build. The BTC leg here is replayed from a captured dataset.",
+      },
+      {
+        tier: 2,
+        note: "Bridge and swap-service correlation uses a static registry plus time/amount matching. There is no live cross-chain event subscription.",
+      },
+      {
+        tier: 3,
+        note: "Graph sharding and pruning at billions-of-edges scale is designed, not built. NetworkX in-memory subgraphs are correct at this scale.",
+      },
     ],
     cert: {
       hash: "77e4b0a1c93f5d268ab04e7f1c3b96d05a8271ef4c90bd63a15e8f207c4db931",
@@ -1246,9 +1497,21 @@ export const CASES: CaseRecord[] = [
       reason:
         "terminal address matches the OTC/hawala registry — reported as a separate category, deliberately not scored against VASP confidence",
       breakdown: [
-        bd("OTC/hawala registry hit", 0, "Terminus confirmed in a prior case. Output category is 'OTC/hawala terminus', not a VASP attribution."),
-        bd("No custodial node on path", 0, "No VASP was reached, so no VASP confidence score is meaningful here."),
-        bd("Pattern corroboration", 0, "Many small disparate deposits with no onward movement — matches the documented terminus heuristic."),
+        bd(
+          "OTC/hawala registry hit",
+          0,
+          "Terminus confirmed in a prior case. Output category is 'OTC/hawala terminus', not a VASP attribution.",
+        ),
+        bd(
+          "No custodial node on path",
+          0,
+          "No VASP was reached, so no VASP confidence score is meaningful here.",
+        ),
+        bd(
+          "Pattern corroboration",
+          0,
+          "Many small disparate deposits with no onward movement — matches the documented terminus heuristic.",
+        ),
       ],
     },
     terminus: {
@@ -1263,21 +1526,24 @@ export const CASES: CaseRecord[] = [
         id: "rf14",
         severity: "critical",
         title: "Confirmed hawala terminus",
-        detail: "Registry hit from FIR-2025-0447 (Surat). Same wallet, same many-in/no-out signature.",
+        detail:
+          "Registry hit from FIR-2025-0447 (Surat). Same wallet, same many-in/no-out signature.",
         source: "otc_hawala.json",
       },
       {
         id: "rf15",
         severity: "high",
         title: "Structuring below reporting threshold",
-        detail: "30–60 transfers per day, each under ₹50,000 equivalent, across 214 counterparties.",
+        detail:
+          "30–60 transfers per day, each under ₹50,000 equivalent, across 214 counterparties.",
         source: "Risk scoring engine — smurfing detection",
       },
       {
         id: "rf16",
         severity: "high",
         title: "Stablecoin parking at terminus",
-        detail: "1,284,900 USDT held with no onward movement for 11 days — issuer-level freeze is viable.",
+        detail:
+          "1,284,900 USDT held with no onward movement for 11 days — issuer-level freeze is viable.",
         source: "stablecoin_check.py",
       },
     ],
@@ -1285,16 +1551,53 @@ export const CASES: CaseRecord[] = [
     freezeRecommendation:
       "PARALLEL ACTION: the terminus holds 1,284,900 USDT. Request Tether to invoke addBlackList on TR8cKtayd6hkoT5dDyGTcKWWTJsDfRGjPH. On a hawala terminus with no custodial intermediary, this is the fastest available intervention — it still runs alongside, not instead of, off-chain investigation of the payout network.",
     timeline: [
-      { at: "2026-09-05T07:40:00Z", actor: "SAHYOG (stub)", phase: "Intake", title: "Case received", detail: "Job ID JOB-4D77A0E3 returned." },
-      { at: "2026-09-05T07:40:02Z", actor: "otc_hawala_check.py", phase: "Enrichment", title: "Registry short-circuit", detail: "Terminal address already confirmed in FIR-2025-0447. Trace resolved in 1.8 seconds." },
-      { at: "2026-09-05T07:42:00Z", actor: "tron_adapter.py", phase: "Ingestion", title: "TRC-20 history pulled", detail: "5,000 transfers normalised from TronGrid." },
-      { at: "2026-09-05T07:44:00Z", actor: "stablecoin_check.py", phase: "Analysis", title: "Parallel freeze surfaced", detail: "Terminal USDT holdings detected; issuer freeze recommended as a parallel track." },
-      { at: "2026-09-05T12:58:00Z", actor: "PI H. Chaudhary", phase: "Action", title: "Referred to off-chain unit", detail: "Cash-out network handed to the field team; wallet retained on the watchlist." },
+      {
+        at: "2026-09-05T07:40:00Z",
+        actor: "SAHYOG (stub)",
+        phase: "Intake",
+        title: "Case received",
+        detail: "Job ID JOB-4D77A0E3 returned.",
+      },
+      {
+        at: "2026-09-05T07:40:02Z",
+        actor: "otc_hawala_check.py",
+        phase: "Enrichment",
+        title: "Registry short-circuit",
+        detail:
+          "Terminal address already confirmed in FIR-2025-0447. Trace resolved in 1.8 seconds.",
+      },
+      {
+        at: "2026-09-05T07:42:00Z",
+        actor: "tron_adapter.py",
+        phase: "Ingestion",
+        title: "TRC-20 history pulled",
+        detail: "5,000 transfers normalised from TronGrid.",
+      },
+      {
+        at: "2026-09-05T07:44:00Z",
+        actor: "stablecoin_check.py",
+        phase: "Analysis",
+        title: "Parallel freeze surfaced",
+        detail: "Terminal USDT holdings detected; issuer freeze recommended as a parallel track.",
+      },
+      {
+        at: "2026-09-05T12:58:00Z",
+        actor: "PI H. Chaudhary",
+        phase: "Action",
+        title: "Referred to off-chain unit",
+        detail: "Cash-out network handed to the field team; wallet retained on the watchlist.",
+      },
     ],
     disclosure: null,
     scopeNotes: [
-      { tier: 2, note: "OTC/hawala detection is a heuristic pattern match against a growing static registry, not a trained model." },
-      { tier: 1, note: "Tron adapter is live against TronGrid. USDT-TRC20 transfer history here is real chain data." },
+      {
+        tier: 2,
+        note: "OTC/hawala detection is a heuristic pattern match against a growing static registry, not a trained model.",
+      },
+      {
+        tier: 1,
+        note: "Tron adapter is live against TronGrid. USDT-TRC20 transfer history here is real chain data.",
+      },
     ],
     cert: {
       hash: "5e0a37c1bd94f8620ae3517cd0b8f42917a6e05c3bd7f19420e8ac6d13f70b5a",
@@ -1314,7 +1617,8 @@ export const ALERTS: AlertItem[] = [
     address: "0x2d9a1b7c4e8f0a3b6d5c9e2f7a1b4c8d0e3f6a92",
     chain: "ethereum",
     title: "Watched wallet moved into a labelled VASP",
-    detail: "Candidate post-mixer wallet deposited 11.94 ETH into KuCoin. Attribution remains probabilistic.",
+    detail:
+      "Candidate post-mixer wallet deposited 11.94 ETH into KuCoin. Attribution remains probabilistic.",
     tier: 3,
   },
   {
@@ -1358,7 +1662,8 @@ export const ALERTS: AlertItem[] = [
     address: "0x00fe78205f5f0e63b8ad2b2ae5337f538a610e04",
     chain: "ethereum",
     title: "Six addresses back-labelled by sweep detection",
-    detail: "Contributing inputs to a confirmed sweep were retroactively mapped to Binance deposit addresses.",
+    detail:
+      "Contributing inputs to a confirmed sweep were retroactively mapped to Binance deposit addresses.",
     tier: 1,
   },
   {

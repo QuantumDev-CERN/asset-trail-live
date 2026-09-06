@@ -50,7 +50,9 @@ export function buildReportText(record: CaseRecord, live?: LiveCaseState): strin
   L.push("4. TRACE PATH — CLASSIFIED HOPS");
   L.push(rule("-"));
   record.edges.forEach((e, i) => {
-    L.push(`Hop ${i + 1} — ${HOP_CLASS_LABEL[e.classification]} (${e.confidenceDelta > 0 ? "+" : ""}${e.confidenceDelta})`);
+    L.push(
+      `Hop ${i + 1} — ${HOP_CLASS_LABEL[e.classification]} (${e.confidenceDelta > 0 ? "+" : ""}${e.confidenceDelta})`,
+    );
     L.push(`  From : ${e.tx.from_address}`);
     L.push(`  To   : ${e.tx.to_address}`);
     L.push(`  Tx   : ${e.tx.tx_hash}`);
@@ -68,7 +70,10 @@ export function buildReportText(record: CaseRecord, live?: LiveCaseState): strin
   L.push("");
   L.push("6. PARALLEL ACTIONS");
   L.push(rule("-"));
-  L.push(record.freezeRecommendation ?? "No stablecoin holdings detected — no issuer-level freeze path applies.");
+  L.push(
+    record.freezeRecommendation ??
+      "No stablecoin holdings detected — no issuer-level freeze path applies.",
+  );
   if (live?.freeze) {
     const f = live.freeze;
     L.push("");
@@ -77,7 +82,9 @@ export function buildReportText(record: CaseRecord, live?: LiveCaseState): strin
     L.push(`Target address   : ${f.address}`);
     L.push(`Amount           : ${f.amountToken} (declared exposure ${formatInr(f.amountInr)})`);
     L.push(`Requested at     : ${formatDateTime(f.requestedAt)}`);
-    L.push(`Status           : ${f.status === "frozen" ? `FROZEN — confirmed ${formatDateTime(f.confirmedAt!)}` : "REQUESTED — awaiting issuer confirmation"}`);
+    L.push(
+      `Status           : ${f.status === "frozen" ? `FROZEN — confirmed ${formatDateTime(f.confirmedAt!)}` : "REQUESTED — awaiting issuer confirmation"}`,
+    );
   }
   L.push("");
   L.push("7. DISCLOSURE REQUEST");
@@ -87,7 +94,9 @@ export function buildReportText(record: CaseRecord, live?: LiveCaseState): strin
     L.push(`Jurisdiction   : ${record.disclosure.jurisdiction}`);
     L.push(`Instrument     : ${record.disclosure.instrument}`);
     L.push(`Travel Rule    : ${record.disclosure.travelRule}`);
-    L.push(`FIU-IND        : ${record.disclosure.fiuRegistered ? "Registered reporting entity" : "Foreign — MLAT / Egmont channel"}`);
+    L.push(
+      `FIU-IND        : ${record.disclosure.fiuRegistered ? "Registered reporting entity" : "Foreign — MLAT / Egmont channel"}`,
+    );
     L.push(`Contact        : ${record.disclosure.contact}`);
     L.push("");
     L.push(record.disclosure.body);
@@ -97,7 +106,9 @@ export function buildReportText(record: CaseRecord, live?: LiveCaseState): strin
   L.push("");
   L.push("8. CASE TIMELINE");
   L.push(rule("-"));
-  const timeline = [...record.timeline, ...(live?.events ?? [])].sort((a, b) => a.at.localeCompare(b.at));
+  const timeline = [...record.timeline, ...(live?.events ?? [])].sort((a, b) =>
+    a.at.localeCompare(b.at),
+  );
   for (const t of timeline) {
     L.push(`${formatDateTime(t.at)} [${t.phase}] ${t.title}`);
     L.push(`  ${t.detail} — ${t.actor}`);

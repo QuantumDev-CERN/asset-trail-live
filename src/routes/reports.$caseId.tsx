@@ -1,7 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useCase } from "@/lib/case-store";
-import { Button, Chip, DisclosureNote, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
+import {
+  Button,
+  Chip,
+  DisclosureNote,
+  Panel,
+  PanelHeader,
+  SectionLabel,
+} from "@/components/ui/primitives";
 import { bandTone, CHAIN_LABEL, formatDateTime, formatInr, HOP_CLASS_LABEL } from "@/lib/format";
 import { useLiveCase } from "@/lib/live-case";
 import { buildReportJson, buildReportText, downloadText, sha256Hex } from "@/lib/report";
@@ -18,7 +25,8 @@ export const Route = createFileRoute("/reports/$caseId")({
       { property: "og:title", content: "Investigation Report — VASP Attribution Engine" },
       {
         property: "og:description",
-        content: "Attribution report with confidence rationale and a SHA-256 evidentiary certificate.",
+        content:
+          "Attribution report with confidence rationale and a SHA-256 evidentiary certificate.",
       },
     ],
   }),
@@ -50,10 +58,13 @@ function ReportView() {
       <div className="mx-auto max-w-2xl py-16 text-center">
         <h1 className="text-xl font-semibold">Case not in the register</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Intake-created cases live in the browser session only. If you reloaded the page, open a demonstrator case or
-          submit a new intake.
+          Intake-created cases live in the browser session only. If you reloaded the page, open a
+          demonstrator case or submit a new intake.
         </p>
-        <Link to="/cases" className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground">
+        <Link
+          to="/cases"
+          className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
+        >
           Back to case register
         </Link>
       </div>
@@ -71,15 +82,18 @@ function ReportView() {
           <p className="mt-1 text-sm text-muted-foreground">{record.firNumber}</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button
-            onClick={() => downloadText(`${filenameBase}.txt`, reportText)}
-            disabled={!hash}
-          >
+          <Button onClick={() => downloadText(`${filenameBase}.txt`, reportText)} disabled={!hash}>
             Download report (.txt)
           </Button>
           <Button
             variant="outline"
-            onClick={() => downloadText(`${filenameBase}.json`, buildReportJson(record, live, hash ?? ""), "application/json")}
+            onClick={() =>
+              downloadText(
+                `${filenameBase}.json`,
+                buildReportJson(record, live, hash ?? ""),
+                "application/json",
+              )
+            }
             disabled={!hash}
           >
             Download evidence bundle (.json)
@@ -95,9 +109,9 @@ function ReportView() {
       </div>
 
       <DisclosureNote title="Controlled demonstration data" tone="warning">
-        This report is generated inside a demonstration console. The trace path, labels and freeze confirmation are
-        simulated on prepared case data. The certificate hash below, however, is computed for real over the exact
-        report text shown on this page.
+        This report is generated inside a demonstration console. The trace path, labels and freeze
+        confirmation are simulated on prepared case data. The certificate hash below, however, is
+        computed for real over the exact report text shown on this page.
       </DisclosureNote>
 
       <Panel>
@@ -128,12 +142,16 @@ function ReportView() {
             <div className="min-w-56 flex-1">
               <SectionLabel>Nearest legally-addressable entity</SectionLabel>
               <p className="mt-1 text-sm font-semibold">{record.terminus.label}</p>
-              <p className="font-mono text-[11px] break-all text-muted-foreground">{record.terminus.address}</p>
+              <p className="font-mono text-[11px] break-all text-muted-foreground">
+                {record.terminus.address}
+              </p>
             </div>
           </div>
           <div className="rounded-md border border-border bg-surface-raised px-3 py-2.5">
             <SectionLabel>Scoring rationale</SectionLabel>
-            <p className="mt-1.5 font-mono text-[11.5px] leading-relaxed">{record.confidence.reason}</p>
+            <p className="mt-1.5 font-mono text-[11.5px] leading-relaxed">
+              {record.confidence.reason}
+            </p>
           </div>
           <p className="text-xs leading-relaxed text-foreground/85">{record.terminus.statement}</p>
         </div>
@@ -157,20 +175,30 @@ function ReportView() {
               {record.edges.map((e, i) => (
                 <tr key={e.id} className="align-top">
                   <td className="px-4 py-2.5 font-mono text-muted-foreground">{i + 1}</td>
-                  <td className="px-4 py-2.5 font-mono text-primary">{HOP_CLASS_LABEL[e.classification]}</td>
+                  <td className="px-4 py-2.5 font-mono text-primary">
+                    {HOP_CLASS_LABEL[e.classification]}
+                  </td>
                   <td className="max-w-72 px-4 py-2.5 font-mono text-[10.5px] break-all">
                     {e.tx.from_address}
                     <span className="text-muted-foreground"> → </span>
                     {e.tx.to_address}
-                    <span className="mt-1 block text-[10px] break-all text-muted-foreground">{e.tx.tx_hash}</span>
+                    <span className="mt-1 block text-[10px] break-all text-muted-foreground">
+                      {e.tx.tx_hash}
+                    </span>
                   </td>
                   <td className="px-4 py-2.5 font-mono">
-                    {e.tx.value > 0 ? `${e.tx.value.toLocaleString("en-US", { maximumFractionDigits: 4 })} ${e.tx.token ?? ""}` : "—"}
+                    {e.tx.value > 0
+                      ? `${e.tx.value.toLocaleString("en-US", { maximumFractionDigits: 4 })} ${e.tx.token ?? ""}`
+                      : "—"}
                   </td>
-                  <td className="px-4 py-2.5 text-muted-foreground">{formatDateTime(e.tx.timestamp)}</td>
+                  <td className="px-4 py-2.5 text-muted-foreground">
+                    {formatDateTime(e.tx.timestamp)}
+                  </td>
                   <td
                     className="px-4 py-2.5 font-mono"
-                    style={{ color: e.confidenceDelta >= 0 ? "var(--success)" : "var(--destructive)" }}
+                    style={{
+                      color: e.confidenceDelta >= 0 ? "var(--success)" : "var(--destructive)",
+                    }}
                   >
                     {e.confidenceDelta > 0 ? "+" : ""}
                     {e.confidenceDelta}
@@ -212,10 +240,13 @@ function ReportView() {
           />
           <div className="space-y-3 p-4">
             {record.freezeRecommendation ? (
-              <DisclosureNote title="Parallel track, not a replacement">{record.freezeRecommendation}</DisclosureNote>
+              <DisclosureNote title="Parallel track, not a replacement">
+                {record.freezeRecommendation}
+              </DisclosureNote>
             ) : (
               <p className="text-xs text-muted-foreground">
-                No stablecoin holdings detected at the terminal address — no issuer-level freeze path applies.
+                No stablecoin holdings detected at the terminal address — no issuer-level freeze
+                path applies.
               </p>
             )}
             {live.freeze ? (
@@ -223,7 +254,9 @@ function ReportView() {
                 <p className="font-semibold">
                   {live.freeze.standard} {live.freeze.asset} · {live.freeze.amountToken}
                 </p>
-                <p className="mt-1 font-mono break-all text-muted-foreground">{live.freeze.tx.tx_hash}</p>
+                <p className="mt-1 font-mono break-all text-muted-foreground">
+                  {live.freeze.tx.tx_hash}
+                </p>
                 <p className="mt-1 text-muted-foreground">
                   Reference {live.freeze.reference} to {live.freeze.issuer} ·{" "}
                   {live.freeze.status === "frozen"
@@ -256,7 +289,9 @@ function ReportView() {
             </div>
             <div className="rounded-md border border-border bg-surface-raised px-3 py-3">
               <SectionLabel>Draft body</SectionLabel>
-              <p className="mt-1.5 text-xs leading-relaxed text-foreground/90">{record.disclosure.body}</p>
+              <p className="mt-1.5 text-xs leading-relaxed text-foreground/90">
+                {record.disclosure.body}
+              </p>
             </div>
           </div>
         </Panel>
@@ -267,7 +302,9 @@ function ReportView() {
           title="Report contents"
           subtitle="Exactly the bytes the certificate hash covers"
           right={
-            <span className="font-mono text-[10px] text-muted-foreground">{reportText.length.toLocaleString("en-IN")} chars</span>
+            <span className="font-mono text-[10px] text-muted-foreground">
+              {reportText.length.toLocaleString("en-IN")} chars
+            </span>
           }
         />
         <pre className="max-h-[28rem] overflow-auto bg-surface-raised p-4 font-mono text-[11px] leading-relaxed whitespace-pre-wrap text-foreground/90">
@@ -276,7 +313,10 @@ function ReportView() {
       </Panel>
 
       <Panel>
-        <PanelHeader title="Evidentiary certificate" subtitle="cert_hash.py — tamper-evident stamp" />
+        <PanelHeader
+          title="Evidentiary certificate"
+          subtitle="cert_hash.py — tamper-evident stamp"
+        />
         <div className="space-y-3 p-4">
           <div className="grid gap-4 sm:grid-cols-3">
             <Item label="Algorithm" value="SHA-256" mono />
@@ -290,16 +330,18 @@ function ReportView() {
             </p>
           </div>
           <p className="text-[11px] leading-relaxed text-muted-foreground">
-            Computed in the browser over the report text shown above. Run the trace or execute a freeze and the report
-            body changes — so does this digest, which is the whole point of the certificate.
+            Computed in the browser over the report text shown above. Run the trace or execute a
+            freeze and the report body changes — so does this digest, which is the whole point of
+            the certificate.
           </p>
         </div>
       </Panel>
 
       <DisclosureNote title="Read this report as a lead, not a verdict">
-        Attribution identifies a custodial entity that can be lawfully asked for records. It does not identify a
-        person, and it is not proof that any account holder committed an offence. Where a mixer appears on the path,
-        no deterministic unmixing is claimed and nothing downstream is asserted as linkage.
+        Attribution identifies a custodial entity that can be lawfully asked for records. It does
+        not identify a person, and it is not proof that any account holder committed an offence.
+        Where a mixer appears on the path, no deterministic unmixing is claimed and nothing
+        downstream is asserted as linkage.
       </DisclosureNote>
     </div>
   );

@@ -42,7 +42,9 @@ export function useCase(id: string): CaseRecord | undefined {
 }
 
 export function updateCase(id: string, patch: Partial<CaseRecord>) {
-  records = records.map((c) => (c.id === id ? { ...c, ...patch, updatedAt: new Date().toISOString() } : c));
+  records = records.map((c) =>
+    c.id === id ? { ...c, ...patch, updatedAt: new Date().toISOString() } : c,
+  );
   emit();
 }
 
@@ -52,7 +54,9 @@ export function resetRegister() {
 }
 
 function hex(n: number): string {
-  return Array.from({ length: n }, () => "0123456789ABCDEF"[Math.floor(Math.random() * 16)]).join("");
+  return Array.from({ length: n }, () => "0123456789ABCDEF"[Math.floor(Math.random() * 16)]).join(
+    "",
+  );
 }
 
 export interface IntakeInput {
@@ -74,7 +78,8 @@ export interface IntakeInput {
  * the returned record is labelled as one everywhere it is displayed.
  */
 export function createInvestigation(input: IntakeInput): CaseRecord {
-  const template = records.find((c) => c.scenario === input.template && c.origin === "demonstrator") ?? seeded[0]!;
+  const template =
+    records.find((c) => c.scenario === input.template && c.origin === "demonstrator") ?? seeded[0]!;
   const now = new Date().toISOString();
   const id = `CASE-${hex(6)}`;
   const suspect = input.suspect_address.trim();
@@ -143,7 +148,10 @@ export function createInvestigation(input: IntakeInput): CaseRecord {
 export type DisplayStatus = CaseRecord["status"] | "tracing" | "funds frozen";
 
 /** Case status as the console shows it, folding in whatever the live run has done. */
-export function displayStatus(record: CaseRecord, live: LiveCaseState = getLiveCase(record.id)): DisplayStatus {
+export function displayStatus(
+  record: CaseRecord,
+  live: LiveCaseState = getLiveCase(record.id),
+): DisplayStatus {
   if (live.freeze?.status === "frozen") return "funds frozen";
   if (live.status === "tracing") return "tracing";
   if (live.status === "complete") {
@@ -154,7 +162,9 @@ export function displayStatus(record: CaseRecord, live: LiveCaseState = getLiveC
   return record.origin === "intake" ? "open" : record.status;
 }
 
-export function statusTone(status: DisplayStatus): "success" | "warning" | "destructive" | "info" | "muted" {
+export function statusTone(
+  status: DisplayStatus,
+): "success" | "warning" | "destructive" | "info" | "muted" {
   if (status === "funds frozen" || status === "attributed") return "success";
   if (status === "tracing") return "info";
   if (status === "escalated") return "destructive";

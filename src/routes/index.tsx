@@ -17,7 +17,8 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Operations Console — VASP Attribution Engine" },
       {
         property: "og:description",
-        content: "Track crypto attribution cases, run traces and issue parallel stablecoin freezes in one console.",
+        content:
+          "Track crypto attribution cases, run traces and issue parallel stablecoin freezes in one console.",
       },
     ],
   }),
@@ -46,8 +47,9 @@ function ConsolePage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Operations console</h1>
           <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-            Attribution stops at the first legally-addressable custodial entity — not simply the fewest hops. Open a
-            demonstrator case to walk a typology end to end, or run an intake to track a new investigation.
+            Attribution stops at the first legally-addressable custodial entity — not simply the
+            fewest hops. Open a demonstrator case to walk a typology end to end, or run an intake to
+            track a new investigation.
           </p>
         </div>
         <Link
@@ -59,16 +61,35 @@ function ConsolePage() {
       </div>
 
       <DisclosureNote title="Controlled demonstration environment" tone="warning">
-        Every case in this register is prepared demonstration data or an intake case replayed against one of those
-        typologies. The counters below reflect what has actually happened in this session — they are not production
-        throughput figures. Nothing here claims deterministic mixer tracing.
+        Every case in this register is prepared demonstration data or an intake case replayed
+        against one of those typologies. The counters below reflect what has actually happened in
+        this session — they are not production throughput figures. Nothing here claims deterministic
+        mixer tracing.
       </DisclosureNote>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        <Stat label="Cases in register" value={String(cases.length)} sub={`${intake.length} opened from intake this session`} />
-        <Stat label="Traces run this session" value={String(runs.length)} sub="Counted from actual trace runs" tone="success" />
-        <Stat label="Parallel freezes confirmed" value={String(frozen.length)} sub="Issuer-level stablecoin freezes" tone="destructive" />
-        <Stat label="Value under trace" value={formatInr(totalValue)} sub="Sum of FIR-declared amounts" />
+        <Stat
+          label="Cases in register"
+          value={String(cases.length)}
+          sub={`${intake.length} opened from intake this session`}
+        />
+        <Stat
+          label="Traces run this session"
+          value={String(runs.length)}
+          sub="Counted from actual trace runs"
+          tone="success"
+        />
+        <Stat
+          label="Parallel freezes confirmed"
+          value={String(frozen.length)}
+          sub="Issuer-level stablecoin freezes"
+          tone="destructive"
+        />
+        <Stat
+          label="Value under trace"
+          value={formatInr(totalValue)}
+          sub="Sum of FIR-declared amounts"
+        />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.55fr_1fr]">
@@ -112,7 +133,9 @@ function ConsolePage() {
                         </div>
                         <div className="text-right">
                           <p className="font-mono text-lg font-semibold">{c.confidence.score}</p>
-                          <p className="text-[10px] text-muted-foreground">{relativeTime(c.updatedAt)}</p>
+                          <p className="text-[10px] text-muted-foreground">
+                            {relativeTime(c.updatedAt)}
+                          </p>
                         </div>
                       </div>
                     </Link>
@@ -140,9 +163,15 @@ function ConsolePage() {
                   <Chip tone={SEVERITY_TONE[a.severity]}>{a.severity}</Chip>
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold">{a.title}</p>
-                    <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{a.detail}</p>
+                    <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                      {a.detail}
+                    </p>
                     <div className="mt-1.5 flex flex-wrap items-center gap-2 font-mono text-[10px] text-muted-foreground">
-                      <Link to="/cases/$caseId" params={{ caseId: a.caseId }} className="text-primary hover:underline">
+                      <Link
+                        to="/cases/$caseId"
+                        params={{ caseId: a.caseId }}
+                        className="text-primary hover:underline"
+                      >
                         {a.caseId}
                       </Link>
                       <span>{shortAddress(a.address, 8, 5)}</span>
@@ -155,8 +184,8 @@ function ConsolePage() {
           </ul>
           <div className="border-t border-border bg-warning/8 px-4 py-2.5">
             <p className="text-[11px] leading-relaxed text-warning">
-              These are recorded events from the demonstrator cases, replayed for the walkthrough. Live webhook
-              subscription needs persistent infrastructure beyond this build.
+              These are recorded events from the demonstrator cases, replayed for the walkthrough.
+              Live webhook subscription needs persistent infrastructure beyond this build.
             </p>
           </div>
         </Panel>
@@ -205,7 +234,12 @@ function Stat({
   sub: string;
   tone?: "success" | "destructive";
 }) {
-  const color = tone === "success" ? "text-success" : tone === "destructive" ? "text-destructive" : "text-foreground";
+  const color =
+    tone === "success"
+      ? "text-success"
+      : tone === "destructive"
+        ? "text-destructive"
+        : "text-foreground";
   return (
     <div className="panel px-4 py-3.5">
       <SectionLabel>{label}</SectionLabel>
