@@ -6,9 +6,9 @@
 
 /*
  * VASP Attribution Engine — forensic console design system.
- * Dark, instrument-panel aesthetic: deep slate-navy surfaces, signal cyan
- * primary, evidence-grade amber/red/green status channels.
- * All colours are oklch semantic tokens. Never hardcode colours in components.
+ * Noir & Gold editorial palette: deep ink backgrounds, warm gold accents,
+ * evidence-grade amber/red status channels. No purple, blue or green tones.
+ * All colours are semantic tokens. Never hardcode colours in components.
  */
 
 @theme inline {
@@ -17,8 +17,9 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
-  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, SFMono-Regular, monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
@@ -59,65 +60,81 @@
 
 :root {
   --radius: 0.4rem;
-  --background: oklch(0.19 0.024 258);
-  --foreground: oklch(0.94 0.008 250);
-  --surface: oklch(0.23 0.026 258);
-  --surface-raised: oklch(0.27 0.028 258);
-  --card: oklch(0.23 0.026 258);
-  --card-foreground: oklch(0.94 0.008 250);
-  --popover: oklch(0.25 0.027 258);
-  --popover-foreground: oklch(0.94 0.008 250);
-  --primary: oklch(0.78 0.13 196);
-  --primary-foreground: oklch(0.18 0.03 240);
-  --secondary: oklch(0.3 0.03 258);
-  --secondary-foreground: oklch(0.92 0.01 250);
-  --muted: oklch(0.28 0.026 258);
-  --muted-foreground: oklch(0.68 0.02 252);
-  --accent: oklch(0.33 0.04 250);
-  --accent-foreground: oklch(0.95 0.01 250);
-  --destructive: oklch(0.63 0.2 22);
-  --destructive-foreground: oklch(0.98 0.005 250);
-  --warning: oklch(0.79 0.15 76);
-  --warning-foreground: oklch(0.2 0.03 60);
-  --success: oklch(0.75 0.15 155);
-  --success-foreground: oklch(0.18 0.03 160);
-  --info: oklch(0.7 0.12 265);
-  --info-foreground: oklch(0.15 0.03 265);
-  --border: oklch(0.32 0.026 258);
-  --border-strong: oklch(0.42 0.03 258);
-  --input: oklch(0.3 0.028 258);
-  --ring: oklch(0.78 0.13 196);
-  --grid-line: oklch(0.26 0.026 258);
-  --node-suspect: oklch(0.72 0.18 30);
-  --node-mixer: oklch(0.63 0.2 22);
-  --node-bridge: oklch(0.7 0.12 265);
-  --node-exchange: oklch(0.75 0.15 155);
-  --node-otc: oklch(0.79 0.15 76);
-  --node-unresolved: oklch(0.6 0.02 252);
-  --node-intermediary: oklch(0.78 0.13 196);
+  --background: #0d0d0d;
+  --foreground: #f5f0e0;
+  --surface: #141414;
+  --surface-raised: #1a1a1a;
+  --card: #141414;
+  --card-foreground: #f5f0e0;
+  --popover: #1a1a1a;
+  --popover-foreground: #f5f0e0;
+  --primary: #c9a84c;
+  --primary-foreground: #0d0d0d;
+  --secondary: #1a1a1a;
+  --secondary-foreground: #f5f0e0;
+  --muted: #1a1a1a;
+  --muted-foreground: #a0a0a0;
+  --accent: #262626;
+  --accent-foreground: #f5f0e0;
+  --destructive: #c45c5c;
+  --destructive-foreground: #f5f0e0;
+  --warning: #d4842a;
+  --warning-foreground: #0d0d0d;
+  --success: #c9a84c;
+  --success-foreground: #0d0d0d;
+  --info: #8b7355;
+  --info-foreground: #f5f0e0;
+  --border: #2a2a2a;
+  --border-strong: #3a3a3a;
+  --input: #1a1a1a;
+  --ring: #c9a84c;
+  --grid-line: #1a1a1a;
+  --node-suspect: #c45c5c;
+  --node-mixer: #c45c5c;
+  --node-bridge: #d4842a;
+  --node-exchange: #c9a84c;
+  --node-otc: #d4842a;
+  --node-unresolved: #6b6b6b;
+  --node-intermediary: #c9a84c;
 }
 
 .light {
-  --background: oklch(0.98 0.004 250);
-  --foreground: oklch(0.22 0.026 258);
-  --surface: oklch(1 0 0);
-  --surface-raised: oklch(0.96 0.006 250);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.026 258);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.026 258);
-  --primary: oklch(0.55 0.12 210);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.94 0.008 250);
-  --secondary-foreground: oklch(0.25 0.026 258);
-  --muted: oklch(0.95 0.006 250);
-  --muted-foreground: oklch(0.48 0.02 252);
-  --accent: oklch(0.93 0.012 250);
-  --accent-foreground: oklch(0.25 0.026 258);
-  --border: oklch(0.9 0.008 250);
-  --border-strong: oklch(0.8 0.012 250);
-  --input: oklch(0.93 0.008 250);
-  --grid-line: oklch(0.94 0.006 250);
+  --background: #f5f0e0;
+  --foreground: #0d0d0d;
+  --surface: #ffffff;
+  --surface-raised: #faf6eb;
+  --card: #ffffff;
+  --card-foreground: #0d0d0d;
+  --popover: #ffffff;
+  --popover-foreground: #0d0d0d;
+  --primary: #c9a84c;
+  --primary-foreground: #0d0d0d;
+  --secondary: #f5f0e0;
+  --secondary-foreground: #0d0d0d;
+  --muted: #f5f0e0;
+  --muted-foreground: #6b6b6b;
+  --accent: #f0e6cc;
+  --accent-foreground: #0d0d0d;
+  --destructive: #c45c5c;
+  --destructive-foreground: #ffffff;
+  --warning: #d4842a;
+  --warning-foreground: #0d0d0d;
+  --success: #c9a84c;
+  --success-foreground: #0d0d0d;
+  --info: #8b7355;
+  --info-foreground: #ffffff;
+  --border: #e5dcc8;
+  --border-strong: #d4c9b0;
+  --input: #f5f0e0;
+  --ring: #c9a84c;
+  --grid-line: #e5dcc8;
+  --node-suspect: #c45c5c;
+  --node-mixer: #c45c5c;
+  --node-bridge: #d4842a;
+  --node-exchange: #c9a84c;
+  --node-otc: #d4842a;
+  --node-unresolved: #6b6b6b;
+  --node-intermediary: #c9a84c;
 }
 
 @layer base {
@@ -125,11 +142,24 @@
     border-color: var(--color-border);
   }
 
+  html {
+    font-family: var(--font-sans);
+  }
+
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
   }
 }
 
