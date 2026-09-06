@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/primitives";
 import { bandTone, CHAIN_LABEL, formatDateTime, formatInr, shortAddress } from "@/lib/format";
 import type { CaseRecord } from "@/lib/types";
+import { mixerCorrelations } from "@/lib/mixer-links";
+
 import type { LiveCaseState } from "@/lib/live-case";
 import {
   completeTrace,
