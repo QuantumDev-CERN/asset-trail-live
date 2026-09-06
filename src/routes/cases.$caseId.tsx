@@ -471,6 +471,67 @@ function CaseWorkspaceBody({
             </div>
           </Panel>
 
+          {mixerLinks.length ? (
+            <Panel>
+              <PanelHeader
+                title="Shared-mixer correlation"
+                subtitle="Other cases that touched the same pool — probabilistic, not a linkage claim"
+              />
+              <div className="space-y-3 p-4">
+                <DisclosureNote title="How to read this" tone="warning">
+                  These cases deposited into the same sanctioned mixing pool and share the weak
+                  pre-mix indicators listed below. No deposit is linked to any withdrawal, and no
+                  common ownership is asserted. Treat this as a prioritisation signal only.
+                </DisclosureNote>
+                <ul className="space-y-2">
+                  {mixerLinks.map((m) => (
+                    <li
+                      key={m.caseId + m.poolAddress}
+                      className="rounded-md border border-border bg-surface-raised px-3 py-2.5"
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="font-mono text-xs">{m.caseId}</span>
+                        <Link
+                          to="/cases/$caseId"
+                          params={{ caseId: m.caseId }}
+                          className="text-[11px] font-semibold text-primary hover:underline"
+                        >
+                          Open case
+                        </Link>
+                      </div>
+                      <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                        {m.title}
+                      </p>
+                      <p className="mt-1.5 text-[11px]">
+                        Shared pool: <span className="font-semibold">{m.pool}</span>
+                      </p>
+                      <p className="font-mono text-[10px] break-all text-muted-foreground">
+                        {m.poolAddress}
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {m.sharedIndicators.length ? (
+                          m.sharedIndicators.map((t) => (
+                            <Chip key={t} tone="warning" mono>
+                              shared: {t}
+                            </Chip>
+                          ))
+                        ) : (
+                          <Chip tone="muted">pool proximity only</Chip>
+                        )}
+                        {m.otherIndicators.slice(0, 3).map((t) => (
+                          <Chip key={t} tone="muted" mono>
+                            {t}
+                          </Chip>
+                        ))}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Panel>
+          ) : null}
+
+
           <Panel>
             <PanelHeader
               title="Scope disclosures for this case"
