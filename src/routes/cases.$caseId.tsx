@@ -113,6 +113,12 @@ function CaseWorkspaceBody({
         </Link>
       </div>
 
+      <DisclosureNote title="Controlled demonstration data" tone="warning">
+        {record.origin === "intake"
+          ? `Opened from console intake. The hop sequence below is replayed from the "${record.templateScenario}" demonstrator typology against the submitted address — it is a simulation, not a live chain pull.`
+          : "Prepared demonstrator case. Chain data, labels and issuer responses are simulated for a repeatable walkthrough; nothing here is a live production feed."}
+      </DisclosureNote>
+
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Meta label="Suspect address" value={shortAddress(record.suspectAddress, 14, 8)} mono />
         <Meta label="FIR" value={record.firNumber} />
@@ -262,7 +268,15 @@ function CaseWorkspaceBody({
                     </div>
                     <div className="rounded-md border border-border bg-surface-raised px-3 py-2">
                       <SectionLabel>Transaction summary</SectionLabel>
-                      <p className="mt-1 text-[11px] leading-relaxed text-foreground/85">
+                      <dl className="mt-1.5 grid gap-2 sm:grid-cols-2">
+                        <Field label="Transfer hash" value={live.freeze.tx.tx_hash} mono />
+                        <Field label="Token contract" value={live.freeze.tx.token_contract ?? "—"} mono />
+                        <Field label="From" value={shortAddress(live.freeze.tx.from_address, 10, 6)} mono />
+                        <Field label="To" value={shortAddress(live.freeze.tx.to_address, 10, 6)} mono />
+                        <Field label="Value" value={`${live.freeze.tx.value.toLocaleString("en-US", { maximumFractionDigits: 2 })} ${live.freeze.asset}`} mono />
+                        <Field label="Transfer time" value={formatDateTime(live.freeze.tx.timestamp)} />
+                      </dl>
+                      <p className="mt-2 text-[11px] leading-relaxed text-foreground/85">
                         {record.edges.length} classified hops from {shortAddress(record.suspectAddress, 10, 6)} to{" "}
                         {live.freeze.address === record.terminus.address ? record.terminus.label : "the flagged address"}.
                         Requested {formatDateTime(live.freeze.requestedAt)}.{" "}
