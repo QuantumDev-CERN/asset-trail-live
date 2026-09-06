@@ -38,7 +38,7 @@ export function FlowGraph({
   onSelectNode: (node: GraphNode) => void;
   onSelectEdge: (edge: GraphEdge) => void;
   /** During a live trace run, only the first N hops are resolved. */
-  revealedHops?: number;
+  revealedHops?: number | undefined;
 }) {
   const [hoverEdge, setHoverEdge] = useState<string | null>(null);
   const limit = revealedHops ?? record.edges.length;

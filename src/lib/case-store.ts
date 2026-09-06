@@ -80,7 +80,7 @@ export function createInvestigation(input: IntakeInput): CaseRecord {
   const suspect = input.suspect_address.trim();
 
   const nodes = template.nodes.map((n, i) =>
-    i === 0 ? { ...n, address: suspect, chain: input.chain, notes: n.notes } : { ...n },
+    i === 0 ? { ...n, address: suspect, chain: input.chain } : { ...n },
   );
   const edges = template.edges.map((e) => ({
     ...e,

@@ -251,7 +251,7 @@ function TextField({
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
-  error?: string;
+  error?: string | undefined;
   mono?: boolean;
 }) {
   return (

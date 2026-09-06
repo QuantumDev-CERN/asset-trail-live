@@ -135,6 +135,12 @@ export interface DisclosureDraft {
 
 export interface CaseRecord {
   id: string;
+  /** "demonstrator" = prepared demo case; "intake" = created live in the console */
+  origin?: "demonstrator" | "intake";
+  /** For intake-created cases: which demonstrator typology the trace replays */
+  templateScenario?: ScenarioKey;
+  templateCaseId?: string;
+  jobId?: string;
   firNumber: string;
   title: string;
   scenario: ScenarioKey;

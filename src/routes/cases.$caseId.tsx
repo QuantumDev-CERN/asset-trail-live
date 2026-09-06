@@ -236,7 +236,7 @@ function CaseWorkspace() {
                     </div>
                   </div>
                 ) : (
-                  <Button variant="destructive" onClick={() => executeFreeze(record)}>
+                  <Button variant="danger" onClick={() => executeFreeze(record)}>
                     Immediate freeze — {stablecoin.standard} {stablecoin.asset} detected
                   </Button>
                 )}
