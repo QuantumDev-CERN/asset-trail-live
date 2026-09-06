@@ -71,6 +71,9 @@ const intakeSchema = z.object({
     .regex(/^[0-9]{1,12}$/, "Enter the declared amount in rupees, digits only"),
 });
 
+type IntakeMode = "replay" | "live";
+type HostState = "unset" | "checking" | "up" | "down";
+
 function IntakePage() {
   const navigate = useNavigate();
   const cases = useCases();
@@ -82,7 +85,9 @@ function IntakePage() {
     officer: "",
     amount: "",
   });
-  const [template, setTemplate] = useState<ScenarioKey>("exchange-inflow");
+  const [template, setTemplate] = useState<ScenarioKey | null>(null);
+  const [mode, setMode] = useState<IntakeMode>("replay");
+  const [host, setHost] = useState<HostState>(API_BASE_URL ? "checking" : "unset");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pending, setPending] = useState(false);
   const [receipt, setReceipt] = useState<{
@@ -91,8 +96,43 @@ function IntakePage() {
     note?: string;
   } | null>(null);
 
+  useEffect(() => {
+    if (!API_BASE_URL) return;
+    let cancelled = false;
+    void checkHealth().then((r) => {
+      if (!cancelled) setHost(r.reachable ? "up" : "down");
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const liveAvailable = host === "up";
+
+  /** Selecting a replay fills in that scenario's real wallet address and chain. */
+  function selectTemplate(key: ScenarioKey) {
+    setTemplate(key);
+    const source = cases.find((c) => c.origin !== "intake" && c.scenario === key);
+    if (source) {
+      setForm((f) => ({ ...f, suspect_address: source.suspectAddress, chain: source.chain }));
+      setErrors((e) => {
+        const next = { ...e };
+        delete next["suspect_address"];
+        return next;
+      });
+    }
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (mode === "replay" && !template) {
+      setErrors({ template: "Pick a controlled replay to run" });
+      return;
+    }
+    if (mode === "live" && !liveAvailable) {
+      setErrors({ template: "No engine host is reachable — a live trace cannot be run" });
+      return;
+    }
     const parsed = intakeSchema.safeParse(form);
     if (!parsed.success) {
       const next: Record<string, string> = {};
@@ -110,6 +150,13 @@ function IntakePage() {
     });
     setReceipt(result);
 
+    if (mode === "live") {
+      // The engine host accepts the address, but this build has no trace
+      // endpoint to return a graph from. Nothing is fabricated here.
+      setPending(false);
+      return;
+    }
+
     const record = createInvestigation({
       fir_number: parsed.data.fir_number,
       suspect_address: parsed.data.suspect_address,
@@ -117,7 +164,7 @@ function IntakePage() {
       complainant_agency: parsed.data.complainant_agency,
       officer: parsed.data.officer,
       amountInr: Number(parsed.data.amount),
-      template,
+      template: template!,
       jobId: result.data.job_id,
     });
     startTrace(record, result.data.job_id);
@@ -128,6 +175,7 @@ function IntakePage() {
   const matchedCase = cases.find(
     (c) => c.suspectAddress.toLowerCase() === form.suspect_address.trim().toLowerCase(),
   );
+
 
   return (
     <div className="space-y-6">
