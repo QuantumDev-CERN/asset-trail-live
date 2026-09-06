@@ -440,12 +440,21 @@ function IntakePage() {
                   </div>
                 </div>
                 <p className="text-xs leading-relaxed">{receipt.data.message}</p>
-                <DisclosureNote title="Integration stub" tone="warning">
-                  {receipt.data.disclaimer}
-                  {receipt.note ? (
-                    <span className="mt-1 block text-[11px] opacity-80">{receipt.note}</span>
-                  ) : null}
-                </DisclosureNote>
+                {receipt.mode === "live" ? (
+                  <DisclosureNote title="Live host — no trace returned" tone="warning">
+                    The engine host accepted this address, but this build exposes no trace endpoint,
+                    so no hops, transactions or attribution came back. Nothing has been invented for
+                    this address. Use a controlled replay to walk through the full workflow.
+                  </DisclosureNote>
+                ) : (
+                  <DisclosureNote title="Integration stub" tone="warning">
+                    {receipt.data.disclaimer}
+                    {receipt.note ? (
+                      <span className="mt-1 block text-[11px] opacity-80">{receipt.note}</span>
+                    ) : null}
+                  </DisclosureNote>
+                )}
+
               </div>
             </Panel>
           ) : null}
