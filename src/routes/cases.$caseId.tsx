@@ -1,11 +1,14 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { caseById, CASES, SCENARIOS } from "@/data/cases";
+import { SCENARIOS } from "@/data/cases";
+import { displayStatus, statusTone, useCase, useCases } from "@/lib/case-store";
 import { FlowGraph, GraphLegend } from "@/components/FlowGraph";
 import { EvidencePanel, type Selection } from "@/components/EvidencePanel";
 import { ConfidencePanel } from "@/components/ConfidencePanel";
 import { Button, Chip, DisclosureNote, Field, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
 import { bandTone, CHAIN_LABEL, formatDateTime, formatInr, shortAddress } from "@/lib/format";
+import type { CaseRecord } from "@/lib/types";
+import type { LiveCaseState } from "@/lib/live-case";
 import {
   completeTrace,
   detectStablecoin,
@@ -16,36 +19,70 @@ import {
 } from "@/lib/live-case";
 
 export const Route = createFileRoute("/cases/$caseId")({
-  loader: ({ params }) => {
-    const record = caseById(params.caseId);
-    if (!record) throw notFound();
-    return { record };
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return { meta: [{ title: "Case unavailable — VASP Attribution Engine" }, { name: "robots", content: "noindex" }] };
-    }
-    const t = `${loaderData.record.id} — ${loaderData.record.title}`;
-    return {
-      meta: [
-        { title: `${t} | VASP Attribution Engine` },
-        { name: "description", content: loaderData.record.summary.slice(0, 155) },
-        { property: "og:title", content: t },
-        { property: "og:description", content: loaderData.record.summary.slice(0, 155) },
-      ],
-    };
-  },
+  head: () => ({
+    meta: [
+      { title: "Case Workspace — VASP Attribution Engine" },
+      {
+        name: "description",
+        content:
+          "Investigation workspace: fund-flow graph, classified hops, confidence attribution, parallel stablecoin freeze and a live case timeline.",
+      },
+      { property: "og:title", content: "Case Workspace — VASP Attribution Engine" },
+      {
+        property: "og:description",
+        content: "Trace a suspect wallet to its nearest legally-addressable VASP with full evidence and timeline.",
+      },
+    ],
+  }),
   component: CaseWorkspace,
 });
 
 const SEVERITY_TONE = { critical: "destructive", high: "warning", medium: "info", info: "muted" } as const;
 
 function CaseWorkspace() {
-  const { record } = Route.useLoaderData();
-  const [selection, setSelection] = useState<Selection>({ type: "node", node: record.nodes[0]! });
+  const { caseId } = Route.useParams();
+  const record = useCase(caseId);
+  const allCases = useCases();
+  const [selection, setSelection] = useState<Selection>(null);
+  const live = useLiveCase(caseId);
+
+  if (!record) {
+    return (
+      <div className="mx-auto max-w-2xl py-16 text-center">
+        <h1 className="text-xl font-semibold">Case not in the register</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Intake-created cases live in this browser session only, so a page reload clears them. Open a demonstrator
+          case or submit a new intake.
+        </p>
+        <Link
+          to="/cases"
+          className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground"
+        >
+          Back to case register
+        </Link>
+      </div>
+    );
+  }
+
+  return <CaseWorkspaceBody record={record} allCases={allCases} selection={selection} setSelection={setSelection} live={live} />;
+}
+
+function CaseWorkspaceBody({
+  record,
+  allCases,
+  selection,
+  setSelection,
+  live,
+}: {
+  record: CaseRecord;
+  allCases: CaseRecord[];
+  selection: Selection;
+  setSelection: (s: Selection) => void;
+  live: LiveCaseState;
+}) {
   const scenario = SCENARIOS.find((s) => s.key === record.scenario);
   const selectedId = selection?.type === "node" ? selection.node.id : null;
-  const live = useLiveCase(record.id);
+  const status = displayStatus(record, live);
   const stablecoin = detectStablecoin(record);
   const timeline = [...record.timeline, ...live.events].sort((a, b) => a.at.localeCompare(b.at));
   const progress =
@@ -61,7 +98,7 @@ function CaseWorkspace() {
               {CHAIN_LABEL[record.chain]}
             </Chip>
             <Chip tone={bandTone(record.confidence.band)}>{record.confidence.band}</Chip>
-            <Chip tone="muted">{record.status}</Chip>
+            <Chip tone={statusTone(status)}>{status}</Chip>
             {scenario ? <Chip tone={scenario.tier === 1 ? "success" : "warning"}>Tier {scenario.tier}</Chip> : null}
           </div>
           <h1 className="mt-2 text-2xl font-bold tracking-tight">{record.title}</h1>
@@ -299,7 +336,7 @@ function CaseWorkspace() {
               {record.linkedCases.length ? (
                 <ul className="space-y-2">
                   {record.linkedCases.map((id) => {
-                    const known = CASES.some((c) => c.id === id);
+                    const known = allCases.some((c) => c.id === id);
                     return (
                       <li key={id} className="flex items-center justify-between gap-3 rounded-md border border-border bg-surface-raised px-3 py-2">
                         <span className="font-mono text-xs">{id}</span>
