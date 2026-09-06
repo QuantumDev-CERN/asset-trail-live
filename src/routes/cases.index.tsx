@@ -43,11 +43,6 @@ function CaseRegister() {
         </p>
       </div>
 
-      <DisclosureNote title="Controlled demonstration data" tone="warning">
-        All cases are prepared demonstration material or intake cases replayed against one of these
-        typologies.
-      </DisclosureNote>
-
       <div className="flex flex-wrap gap-2">
         <FilterButton active={filter === "all"} onClick={() => setFilter("all")}>
           All flows

@@ -60,13 +60,6 @@ function ConsolePage() {
         </Link>
       </div>
 
-      <DisclosureNote title="Controlled demonstration environment" tone="warning">
-        Every case in this register is prepared demonstration data or an intake case replayed
-        against one of those typologies. The counters below reflect what has actually happened in
-        this session — they are not production throughput figures. Nothing here claims deterministic
-        mixer tracing.
-      </DisclosureNote>
-
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Stat
           label="Cases in register"
