@@ -63,9 +63,10 @@ export function mixerCorrelations(record: CaseRecord, all: CaseRecord[]): MixerC
     if (other.id === record.id) continue;
     for (const p of mixerNodes(other)) {
       const exact = mine.get(poolKey(p));
-      const family = [...mine.values()].find((m) =>
-        (m.label ?? "").split(":")[0]!.trim().toLowerCase() ===
-        (p.label ?? "").split(":")[0]!.trim().toLowerCase(),
+      const family = [...mine.values()].find(
+        (m) =>
+          (m.label ?? "").split(":")[0]!.trim().toLowerCase() ===
+          (p.label ?? "").split(":")[0]!.trim().toLowerCase(),
       );
       const matched = exact ?? family;
       if (!matched) continue;
@@ -75,7 +76,9 @@ export function mixerCorrelations(record: CaseRecord, all: CaseRecord[]): MixerC
         title: other.title,
         firNumber: other.firNumber,
         known: true,
-        pool: exact ? (matched.label ?? matched.address) : `${p.label ?? p.address} (same operator)`,
+        pool: exact
+          ? (matched.label ?? matched.address)
+          : `${p.label ?? p.address} (same operator)`,
         poolAddress: p.address,
         sharedIndicators: theirs.filter((t) => myIndicators.has(t)),
         otherIndicators: theirs.filter((t) => !myIndicators.has(t)),

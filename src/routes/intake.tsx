@@ -176,7 +176,6 @@ function IntakePage() {
     (c) => c.suspectAddress.toLowerCase() === form.suspect_address.trim().toLowerCase(),
   );
 
-
   return (
     <div className="space-y-6">
       <div>
@@ -319,7 +318,9 @@ function IntakePage() {
 
             <div>
               <SectionLabel>
-                {mode === "replay" ? "Controlled replay to load (required)" : "Replay (not used in live mode)"}
+                {mode === "replay"
+                  ? "Controlled replay to load (required)"
+                  : "Replay (not used in live mode)"}
               </SectionLabel>
               <div className="mt-2 grid gap-2">
                 {SCENARIOS.map((s) => {
@@ -435,7 +436,6 @@ function IntakePage() {
                     ) : null}
                   </DisclosureNote>
                 )}
-
               </div>
             </Panel>
           ) : null}
@@ -483,7 +483,6 @@ function IntakePage() {
                         </Link>
                       </div>
                     ) : null}
-
                   </li>
                 );
               })}
