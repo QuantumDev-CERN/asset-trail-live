@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { CASES, SCENARIOS } from "@/data/cases";
+import { SCENARIOS } from "@/data/cases";
+import { displayStatus, statusTone, useCases } from "@/lib/case-store";
+import { useLiveTick } from "@/lib/live-case";
 import { bandTone, CHAIN_LABEL, formatDateTime, formatInr, shortAddress } from "@/lib/format";
-import { Chip, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
+import { Chip, DisclosureNote, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
 import type { ScenarioKey } from "@/lib/types";
 
 export const Route = createFileRoute("/cases/")({
@@ -26,16 +28,23 @@ export const Route = createFileRoute("/cases/")({
 
 function CaseRegister() {
   const [filter, setFilter] = useState<ScenarioKey | "all">("all");
-  const visible = filter === "all" ? CASES : CASES.filter((c) => c.scenario === filter);
+  const cases = useCases();
+  useLiveTick();
+  const visible = filter === "all" ? cases : cases.filter((c) => c.scenario === filter);
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Case register</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Select a forensic simulation flow to load the matching worked case end to end.
+          Select a typology to load the matching worked case end to end. Intake cases opened this session appear
+          here too.
         </p>
       </div>
+
+      <DisclosureNote title="Controlled demonstration data" tone="warning">
+        All cases are prepared demonstration material or intake cases replayed against one of these typologies.
+      </DisclosureNote>
 
       <div className="flex flex-wrap gap-2">
         <FilterButton active={filter === "all"} onClick={() => setFilter("all")}>
@@ -84,7 +93,8 @@ function CaseRegister() {
                       {CHAIN_LABEL[c.chain]}
                     </Chip>
                     <Chip tone={bandTone(c.confidence.band)}>{c.confidence.band}</Chip>
-                    <Chip tone="muted">{c.status}</Chip>
+                    <Chip tone={statusTone(displayStatus(c))}>{displayStatus(c)}</Chip>
+                    {c.origin === "intake" ? <Chip tone="info">intake</Chip> : null}
                   </div>
                   <p className="mt-1.5 text-sm font-semibold">{c.title}</p>
                   <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{c.summary}</p>
