@@ -482,14 +482,27 @@ function IntakePage() {
                       </p>
                     </div>
                     {record ? (
-                      <Link
-                        to="/cases/$caseId"
-                        params={{ caseId: record.id }}
-                        className="rounded-md border border-border-strong px-3 py-1.5 text-xs font-semibold hover:bg-accent"
-                      >
-                        Open case
-                      </Link>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setMode("replay");
+                            selectTemplate(s.key);
+                          }}
+                          className="rounded-md border border-border-strong px-3 py-1.5 text-xs font-semibold hover:bg-accent"
+                        >
+                          Load into intake
+                        </button>
+                        <Link
+                          to="/cases/$caseId"
+                          params={{ caseId: record.id }}
+                          className="rounded-md border border-border-strong px-3 py-1.5 text-xs font-semibold hover:bg-accent"
+                        >
+                          Open case
+                        </Link>
+                      </div>
                     ) : null}
+
                   </li>
                 );
               })}
