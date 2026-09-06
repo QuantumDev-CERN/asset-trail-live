@@ -5,7 +5,7 @@
 // environment, so a page reload resets every run to its starting state.
 
 import { useSyncExternalStore } from "react";
-import type { CaseRecord, TimelineEvent } from "@/lib/types";
+import type { CaseRecord, NormalizedTransaction, TimelineEvent } from "@/lib/types";
 
 export type TraceStatus = "idle" | "tracing" | "complete";
 
@@ -21,6 +21,8 @@ export interface FreezeRecord {
   amountInr: number;
   reference: string;
   status: "requested" | "frozen";
+  /** The on-chain transfer the freeze is aimed at — shown as the transaction summary */
+  tx: NormalizedTransaction;
 }
 
 export interface LiveCaseState {
@@ -188,26 +190,28 @@ export function completeTrace(record: CaseRecord) {
   });
 }
 
-/** Stablecoin detected on the trace path, if any — drives the freeze action. */
+/** Stablecoin detected on the trace path — TRC-20 USDT/USDC first, then other chains. */
 export function detectStablecoin(record: CaseRecord): {
-  asset: string;
+  asset: "USDT" | "USDC";
   standard: string;
   issuer: string;
   address: string;
   amountToken: string;
+  tx: NormalizedTransaction;
 } | null {
-  if (!record.freezeRecommendation) return null;
-  const edge =
-    record.edges.find((e) => /usdt|usdc/i.test(e.tx.token ?? "")) ?? record.edges[record.edges.length - 1];
-  if (!edge) return null;
-  const token = /usdc/i.test(edge.tx.token ?? "") ? "USDC" : "USDT";
-  const standard = edge.tx.chain === "tron" ? "TRC-20" : edge.tx.chain === "ethereum" ? "ERC-20" : "BEP-20";
+  const stable = record.edges.filter((e) => /^(usdt|usdc)$/i.test((e.tx.token ?? "").trim()));
+  if (!stable.length) return null;
+  const edge = stable.find((e) => e.tx.chain === "tron") ?? stable[stable.length - 1]!;
+  const asset = /usdc/i.test(edge.tx.token ?? "") ? "USDC" : "USDT";
+  const standard =
+    edge.tx.chain === "tron" ? "TRC-20" : edge.tx.chain === "ethereum" ? "ERC-20" : "BEP-20";
   return {
-    asset: token,
+    asset,
     standard,
-    issuer: token === "USDC" ? "Circle Internet Financial" : "Tether Operations Limited",
-    address: record.terminus.address,
-    amountToken: `${edge.tx.value.toLocaleString("en-US", { maximumFractionDigits: 2 })} ${token}`,
+    issuer: asset === "USDC" ? "Circle Internet Financial" : "Tether Operations Limited",
+    address: edge.tx.to_address,
+    amountToken: `${edge.tx.value.toLocaleString("en-US", { maximumFractionDigits: 2 })} ${asset}`,
+    tx: edge.tx,
   };
 }
 
@@ -234,6 +238,7 @@ export function executeFreeze(record: CaseRecord) {
       amountInr: record.amountInr,
       reference,
       status: "requested",
+      tx: detected.tx,
     },
     events: [
       ...state.events,
@@ -241,7 +246,7 @@ export function executeFreeze(record: CaseRecord) {
         `${record.officer} · ${record.agency}`,
         "parallel-action",
         `Immediate freeze requested — ${detected.standard} ${detected.asset} detected`,
-        `Issuer-level freeze request ${reference} sent to ${detected.issuer} for ${detected.address} (${detected.amountToken}). Runs alongside, not instead of, the VASP disclosure route.`,
+          `Issuer-level freeze request ${reference} sent to ${detected.issuer} for ${detected.address} (${detected.amountToken}), on ${detected.standard} transfer ${detected.tx.tx_hash}. Runs alongside, not instead of, the VASP disclosure route.`,
       ),
     ],
   });
