@@ -337,28 +337,43 @@ function IntakePage() {
             </div>
 
             <div>
-              <SectionLabel>Typology to replay</SectionLabel>
+              <SectionLabel>
+                {mode === "replay" ? "Controlled replay to load (required)" : "Replay (not used in live mode)"}
+              </SectionLabel>
               <div className="mt-2 grid gap-2">
-                {SCENARIOS.map((s) => (
-                  <button
-                    key={s.key}
-                    type="button"
-                    onClick={() => setTemplate(s.key)}
-                    className={`rounded-md border px-3 py-2 text-left transition-colors ${
-                      template === s.key
-                        ? "border-primary/50 bg-primary/10"
-                        : "border-border hover:bg-accent"
-                    }`}
-                  >
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs font-semibold">{s.name}</span>
-                      <Chip tone={s.tier === 1 ? "success" : "warning"}>Tier {s.tier}</Chip>
-                    </div>
-                    <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
-                      {s.blurb}
-                    </p>
-                  </button>
-                ))}
+                {SCENARIOS.map((s) => {
+                  const source = cases.find((c) => c.origin !== "intake" && c.scenario === s.key);
+                  return (
+                    <button
+                      key={s.key}
+                      type="button"
+                      onClick={() => selectTemplate(s.key)}
+                      className={`rounded-md border px-3 py-2 text-left transition-colors ${
+                        template === s.key
+                          ? "border-primary/50 bg-primary/10"
+                          : "border-border hover:bg-accent"
+                      }`}
+                    >
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs font-semibold">{s.name}</span>
+                        <Chip tone={s.tier === 1 ? "success" : "warning"}>Tier {s.tier}</Chip>
+                        {source ? (
+                          <Chip tone="muted" mono>
+                            {CHAIN_LABEL[source.chain]}
+                          </Chip>
+                        ) : null}
+                      </div>
+                      <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">
+                        {s.blurb}
+                      </p>
+                      {source ? (
+                        <p className="mt-1 font-mono text-[10px] break-all text-muted-foreground">
+                          loads {source.suspectAddress}
+                        </p>
+                      ) : null}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -376,9 +391,17 @@ function IntakePage() {
             ) : null}
 
             <div className="flex flex-wrap gap-2">
-              <Button type="submit" disabled={pending}>
-                {pending ? "Registering…" : "Register case and run trace"}
+              <Button
+                type="submit"
+                disabled={pending || (mode === "replay" ? !template : !liveAvailable)}
+              >
+                {pending
+                  ? "Registering…"
+                  : mode === "live"
+                    ? "Send address to engine host"
+                    : "Register case and run replay"}
               </Button>
+
               {matchedCase ? (
                 <Button
                   variant="outline"
