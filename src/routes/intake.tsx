@@ -176,7 +176,6 @@ function IntakePage() {
     (c) => c.suspectAddress.toLowerCase() === form.suspect_address.trim().toLowerCase(),
   );
 
-
   return (
     <div className="space-y-6">
       <div>
@@ -186,25 +185,6 @@ function IntakePage() {
           a job ID comes back, and the trace starts running hop by hop on the case workspace.
         </p>
       </div>
-
-      {liveAvailable ? (
-        <DisclosureNote title="Engine host reachable" tone="info">
-          A live engine host is configured at <span className="font-mono">{API_BASE_URL}</span> and
-          responding. In live mode the address you type is sent to that host. Anything returned by
-          the host is labelled <span className="font-semibold">live</span>; everything else on this
-          console is controlled demonstration data.
-        </DisclosureNote>
-      ) : (
-        <DisclosureNote title="No engine host — live tracing is disabled" tone="destructive">
-          {API_BASE_URL
-            ? `The configured engine host (${API_BASE_URL}) is not responding.`
-            : "No engine host is configured for this build."}{" "}
-          A live trace therefore cannot be run, and this console will not invent hops, transactions
-          or attributions for an address you type. To see the full workflow, pick one of the
-          controlled replays below — its real scenario wallet and chain are filled in for you, and
-          every screen stays labelled as simulated data.
-        </DisclosureNote>
-      )}
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
         <Panel>
@@ -338,7 +318,9 @@ function IntakePage() {
 
             <div>
               <SectionLabel>
-                {mode === "replay" ? "Controlled replay to load (required)" : "Replay (not used in live mode)"}
+                {mode === "replay"
+                  ? "Controlled replay to load (required)"
+                  : "Replay (not used in live mode)"}
               </SectionLabel>
               <div className="mt-2 grid gap-2">
                 {SCENARIOS.map((s) => {
@@ -454,7 +436,6 @@ function IntakePage() {
                     ) : null}
                   </DisclosureNote>
                 )}
-
               </div>
             </Panel>
           ) : null}
@@ -502,7 +483,6 @@ function IntakePage() {
                         </Link>
                       </div>
                     ) : null}
-
                   </li>
                 );
               })}

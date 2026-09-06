@@ -4,7 +4,7 @@ import { SCENARIOS } from "@/data/cases";
 import { displayStatus, statusTone, useCases } from "@/lib/case-store";
 import { useLiveTick } from "@/lib/live-case";
 import { bandTone, CHAIN_LABEL, formatDateTime, formatInr, shortAddress } from "@/lib/format";
-import { Chip, DisclosureNote, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
+import { Chip, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
 import type { ScenarioKey } from "@/lib/types";
 
 export const Route = createFileRoute("/cases/")({
@@ -42,11 +42,6 @@ function CaseRegister() {
           session appear here too.
         </p>
       </div>
-
-      <DisclosureNote title="Controlled demonstration data" tone="warning">
-        All cases are prepared demonstration material or intake cases replayed against one of these
-        typologies.
-      </DisclosureNote>
 
       <div className="flex flex-wrap gap-2">
         <FilterButton active={filter === "all"} onClick={() => setFilter("all")}>

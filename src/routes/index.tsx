@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ALERTS, SCENARIOS } from "@/data/cases";
 import { bandTone, CHAIN_LABEL, formatInr, relativeTime, shortAddress } from "@/lib/format";
-import { Chip, DisclosureNote, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
+import { Chip, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
 import { displayStatus, statusTone, useCases } from "@/lib/case-store";
 import { getLiveCase, useLiveTick } from "@/lib/live-case";
 
@@ -59,13 +59,6 @@ function ConsolePage() {
           New case intake
         </Link>
       </div>
-
-      <DisclosureNote title="Controlled demonstration environment" tone="warning">
-        Every case in this register is prepared demonstration data or an intake case replayed
-        against one of those typologies. The counters below reflect what has actually happened in
-        this session — they are not production throughput figures. Nothing here claims deterministic
-        mixer tracing.
-      </DisclosureNote>
 
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Stat

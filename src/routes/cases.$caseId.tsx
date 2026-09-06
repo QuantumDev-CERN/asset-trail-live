@@ -535,7 +535,6 @@ function CaseWorkspaceBody({
             </Panel>
           ) : null}
 
-
           <Panel>
             <PanelHeader
               title="Scope disclosures for this case"
