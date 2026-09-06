@@ -187,11 +187,24 @@ function IntakePage() {
         </p>
       </div>
 
-      <DisclosureNote title="Controlled demonstration" tone="warning">
-        This console runs on prepared case data. An intake submission creates a real, trackable case
-        record here, but the hop sequence it resolves is replayed from the laundering typology you
-        select below — it is a simulation, not a live chain pull against the address you type.
-      </DisclosureNote>
+      {liveAvailable ? (
+        <DisclosureNote title="Engine host reachable" tone="info">
+          A live engine host is configured at <span className="font-mono">{API_BASE_URL}</span> and
+          responding. In live mode the address you type is sent to that host. Anything returned by
+          the host is labelled <span className="font-semibold">live</span>; everything else on this
+          console is controlled demonstration data.
+        </DisclosureNote>
+      ) : (
+        <DisclosureNote title="No engine host — live tracing is disabled" tone="destructive">
+          {API_BASE_URL
+            ? `The configured engine host (${API_BASE_URL}) is not responding.`
+            : "No engine host is configured for this build."}{" "}
+          A live trace therefore cannot be run, and this console will not invent hops, transactions
+          or attributions for an address you type. To see the full workflow, pick one of the
+          controlled replays below — its real scenario wallet and chain are filled in for you, and
+          every screen stays labelled as simulated data.
+        </DisclosureNote>
+      )}
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
         <Panel>
@@ -199,12 +212,53 @@ function IntakePage() {
             title="Open an investigation"
             subtitle="Fields match the backend SahyogIntakeRequest model"
             right={
-              <Chip tone={API_BASE_URL ? "success" : "muted"} mono>
-                {API_BASE_URL ? "live host set" : "stub mode"}
+              <Chip tone={liveAvailable ? "success" : "muted"} mono>
+                {host === "checking"
+                  ? "checking host…"
+                  : liveAvailable
+                    ? "live host up"
+                    : API_BASE_URL
+                      ? "host unreachable"
+                      : "stub mode"}
               </Chip>
             }
           />
           <form onSubmit={onSubmit} className="space-y-4 p-4">
+            <div>
+              <SectionLabel>Submission mode</SectionLabel>
+              <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => setMode("replay")}
+                  className={`rounded-md border px-3 py-2 text-left ${
+                    mode === "replay" ? "border-primary/50 bg-primary/10" : "border-border"
+                  }`}
+                >
+                  <span className="text-xs font-semibold">Controlled replay</span>
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    Runs a prepared typology end to end. Labelled simulation everywhere.
+                  </p>
+                </button>
+                <button
+                  type="button"
+                  disabled={!liveAvailable}
+                  onClick={() => setMode("live")}
+                  className={`rounded-md border px-3 py-2 text-left ${
+                    mode === "live" ? "border-primary/50 bg-primary/10" : "border-border"
+                  } ${liveAvailable ? "" : "cursor-not-allowed opacity-50"}`}
+                >
+                  <span className="text-xs font-semibold">Live trace</span>
+                  <p className="mt-1 text-[11px] text-muted-foreground">
+                    {liveAvailable
+                      ? "Sends the address to the engine host."
+                      : "Unavailable — no engine host is reachable."}
+                  </p>
+                </button>
+              </div>
+              {errors["template"] ? (
+                <p className="mt-1 text-[11px] text-destructive">{errors["template"]}</p>
+              ) : null}
+            </div>
             <TextField
               label="FIR number"
               value={form.fir_number}
@@ -213,13 +267,20 @@ function IntakePage() {
               onChange={(v) => setForm((f) => ({ ...f, fir_number: v }))}
             />
             <TextField
-              label="Suspect wallet address"
+              label={
+                mode === "replay" && template
+                  ? "Suspect wallet address (filled from the selected replay)"
+                  : "Suspect wallet address"
+              }
               value={form.suspect_address}
-              placeholder="0x… or T… or bc1…"
+              placeholder={
+                mode === "replay" ? "Pick a replay below to fill this in" : "0x… or T… or bc1…"
+              }
               mono
               error={errors["suspect_address"]}
               onChange={(v) => setForm((f) => ({ ...f, suspect_address: v }))}
             />
+
             <div>
               <SectionLabel>Chain</SectionLabel>
               <div className="mt-2 flex flex-wrap gap-2">
