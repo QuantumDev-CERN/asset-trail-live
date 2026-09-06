@@ -1,39 +1,66 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { caseById } from "@/data/cases";
-import { Chip, DisclosureNote, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { useCase } from "@/lib/case-store";
+import { Button, Chip, DisclosureNote, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
 import { bandTone, CHAIN_LABEL, formatDateTime, formatInr, HOP_CLASS_LABEL } from "@/lib/format";
+import { useLiveCase } from "@/lib/live-case";
+import { buildReportJson, buildReportText, downloadText, sha256Hex } from "@/lib/report";
 
 export const Route = createFileRoute("/reports/$caseId")({
-  loader: ({ params }) => {
-    const record = caseById(params.caseId);
-    if (!record) throw notFound();
-    return { record };
-  },
-  head: ({ loaderData }) => {
-    if (!loaderData) {
-      return { meta: [{ title: "Report unavailable — VASP Attribution Engine" }, { name: "robots", content: "noindex" }] };
-    }
-    const t = `Investigation report ${loaderData.record.id}`;
-    return {
-      meta: [
-        { title: `${t} | VASP Attribution Engine` },
-        {
-          name: "description",
-          content: `Investigation-ready attribution report for ${loaderData.record.id} with confidence rationale and a hash-stamped evidentiary certificate.`,
-        },
-        { property: "og:title", content: t },
-        {
-          property: "og:description",
-          content: "Investigation-ready attribution report with confidence rationale and evidentiary certificate.",
-        },
-      ],
-    };
-  },
+  head: () => ({
+    meta: [
+      { title: "Investigation Report — VASP Attribution Engine" },
+      {
+        name: "description",
+        content:
+          "Investigation-ready attribution report with confidence rationale, trace path and a SHA-256 evidentiary certificate computed over the report body.",
+      },
+      { property: "og:title", content: "Investigation Report — VASP Attribution Engine" },
+      {
+        property: "og:description",
+        content: "Attribution report with confidence rationale and a SHA-256 evidentiary certificate.",
+      },
+    ],
+  }),
   component: ReportView,
 });
 
 function ReportView() {
-  const { record } = Route.useLoaderData();
+  const { caseId } = Route.useParams();
+  const record = useCase(caseId);
+  const live = useLiveCase(caseId);
+  const [hash, setHash] = useState<string | null>(null);
+
+  const reportText = record ? buildReportText(record, live) : "";
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!reportText) return;
+    setHash(null);
+    void sha256Hex(reportText).then((h) => {
+      if (!cancelled) setHash(h);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [reportText]);
+
+  if (!record) {
+    return (
+      <div className="mx-auto max-w-2xl py-16 text-center">
+        <h1 className="text-xl font-semibold">Case not in the register</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Intake-created cases live in the browser session only. If you reloaded the page, open a demonstrator case or
+          submit a new intake.
+        </p>
+        <Link to="/cases" className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground">
+          Back to case register
+        </Link>
+      </div>
+    );
+  }
+
+  const filenameBase = `${record.id}-attribution-report`;
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
@@ -43,14 +70,35 @@ function ReportView() {
           <h1 className="mt-1 text-2xl font-bold tracking-tight">{record.id}</h1>
           <p className="mt-1 text-sm text-muted-foreground">{record.firNumber}</p>
         </div>
-        <Link
-          to="/cases/$caseId"
-          params={{ caseId: record.id }}
-          className="rounded-md border border-border-strong px-4 py-2 text-xs font-semibold hover:bg-accent"
-        >
-          Back to workspace
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            onClick={() => downloadText(`${filenameBase}.txt`, reportText)}
+            disabled={!hash}
+          >
+            Download report (.txt)
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => downloadText(`${filenameBase}.json`, buildReportJson(record, live, hash ?? ""), "application/json")}
+            disabled={!hash}
+          >
+            Download evidence bundle (.json)
+          </Button>
+          <Link
+            to="/cases/$caseId"
+            params={{ caseId: record.id }}
+            className="rounded-md border border-border-strong px-4 py-2 text-xs font-semibold hover:bg-accent"
+          >
+            Back to workspace
+          </Link>
+        </div>
       </div>
+
+      <DisclosureNote title="Controlled demonstration data" tone="warning">
+        This report is generated inside a demonstration console. The trace path, labels and freeze confirmation are
+        simulated on prepared case data. The certificate hash below, however, is computed for real over the exact
+        report text shown on this page.
+      </DisclosureNote>
 
       <Panel>
         <PanelHeader title="Metadata" subtitle="report_generator.py" />
@@ -151,8 +199,18 @@ function ReportView() {
         </Panel>
 
         <Panel>
-          <PanelHeader title="Parallel actions" subtitle="stablecoin issuer freeze" />
-          <div className="p-4">
+          <PanelHeader
+            title="Parallel actions"
+            subtitle="stablecoin issuer freeze"
+            right={
+              live.freeze ? (
+                <Chip tone={live.freeze.status === "frozen" ? "success" : "warning"}>
+                  {live.freeze.status === "frozen" ? "funds frozen" : "request sent"}
+                </Chip>
+              ) : null
+            }
+          />
+          <div className="space-y-3 p-4">
             {record.freezeRecommendation ? (
               <DisclosureNote title="Parallel track, not a replacement">{record.freezeRecommendation}</DisclosureNote>
             ) : (
@@ -160,6 +218,20 @@ function ReportView() {
                 No stablecoin holdings detected at the terminal address — no issuer-level freeze path applies.
               </p>
             )}
+            {live.freeze ? (
+              <div className="rounded-md border border-success/40 bg-success/8 p-3 text-[11px] leading-relaxed">
+                <p className="font-semibold">
+                  {live.freeze.standard} {live.freeze.asset} · {live.freeze.amountToken}
+                </p>
+                <p className="mt-1 font-mono break-all text-muted-foreground">{live.freeze.tx.tx_hash}</p>
+                <p className="mt-1 text-muted-foreground">
+                  Reference {live.freeze.reference} to {live.freeze.issuer} ·{" "}
+                  {live.freeze.status === "frozen"
+                    ? `funds frozen ${formatDateTime(live.freeze.confirmedAt!)}`
+                    : "awaiting issuer confirmation"}
+                </p>
+              </div>
+            ) : null}
           </div>
         </Panel>
       </div>
@@ -186,36 +258,48 @@ function ReportView() {
               <SectionLabel>Draft body</SectionLabel>
               <p className="mt-1.5 text-xs leading-relaxed text-foreground/90">{record.disclosure.body}</p>
             </div>
-            <p className="text-[11px] text-muted-foreground">
-              Draft only. It requires officer sign-off before it leaves the console, and the audit trail records who
-              sent it.
-            </p>
           </div>
         </Panel>
       ) : null}
 
       <Panel>
+        <PanelHeader
+          title="Report contents"
+          subtitle="Exactly the bytes the certificate hash covers"
+          right={
+            <span className="font-mono text-[10px] text-muted-foreground">{reportText.length.toLocaleString("en-IN")} chars</span>
+          }
+        />
+        <pre className="max-h-[28rem] overflow-auto bg-surface-raised p-4 font-mono text-[11px] leading-relaxed whitespace-pre-wrap text-foreground/90">
+          {reportText}
+        </pre>
+      </Panel>
+
+      <Panel>
         <PanelHeader title="Evidentiary certificate" subtitle="cert_hash.py — tamper-evident stamp" />
         <div className="space-y-3 p-4">
           <div className="grid gap-4 sm:grid-cols-3">
-            <Item label="Algorithm" value={record.cert.algorithm} mono />
+            <Item label="Algorithm" value="SHA-256" mono />
             <Item label="Generated at" value={formatDateTime(record.cert.generatedAt)} />
             <Item label="Statute" value={record.cert.statute} />
           </div>
           <div className="rounded-md border border-primary/35 bg-primary/8 px-3 py-2.5">
             <SectionLabel className="text-primary">SHA-256 digest of report content</SectionLabel>
-            <p className="mt-1.5 font-mono text-[11.5px] break-all text-foreground">{record.cert.hash}</p>
+            <p className="mt-1.5 font-mono text-[11.5px] break-all text-foreground">
+              {hash ?? "computing digest…"}
+            </p>
           </div>
           <p className="text-[11px] leading-relaxed text-muted-foreground">
-            Any change to the report content changes this digest, which is what makes the certificate meaningful.
-            The hash covers the report body above, not this rendering.
+            Computed in the browser over the report text shown above. Run the trace or execute a freeze and the report
+            body changes — so does this digest, which is the whole point of the certificate.
           </p>
         </div>
       </Panel>
 
       <DisclosureNote title="Read this report as a lead, not a verdict">
         Attribution identifies a custodial entity that can be lawfully asked for records. It does not identify a
-        person, and it is not proof that any account holder committed an offence.
+        person, and it is not proof that any account holder committed an offence. Where a mixer appears on the path,
+        no deterministic unmixing is claimed and nothing downstream is asserted as linkage.
       </DisclosureNote>
     </div>
   );
