@@ -72,6 +72,25 @@ export function useLiveCase(caseId: string): LiveCaseState {
   );
 }
 
+let version = 0;
+const bump = () => {
+  version += 1;
+};
+listeners.add(bump);
+
+/** Subscribe a list view to every live-run change, then read getLiveCase(id) per row. */
+export function useLiveTick(): number {
+  return useSyncExternalStore(
+    (cb) => {
+      listeners.add(cb);
+      return () => listeners.delete(cb);
+    },
+    () => version,
+    () => 0,
+  );
+}
+
+
 function hex(n: number): string {
   return Array.from({ length: n }, () => "0123456789ABCDEF"[Math.floor(Math.random() * 16)]).join("");
 }
