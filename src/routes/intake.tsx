@@ -1,12 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import {
+  checkHealth,
   submitSahyogIntake,
   type SahyogIntakeResponse,
   type ApiMode,
   API_BASE_URL,
 } from "@/lib/api";
+
 import { SCENARIOS } from "@/data/cases";
 import { createInvestigation, useCases } from "@/lib/case-store";
 import { startTrace } from "@/lib/live-case";
