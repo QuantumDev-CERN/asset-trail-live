@@ -1,8 +1,10 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 import { submitSahyogIntake, type SahyogIntakeResponse, type ApiMode, API_BASE_URL } from "@/lib/api";
-import { CASES, SCENARIOS } from "@/data/cases";
+import { SCENARIOS } from "@/data/cases";
+import { createInvestigation, useCases } from "@/lib/case-store";
+import { startTrace } from "@/lib/live-case";
 import { Button, Chip, DisclosureNote, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
 import { CHAIN_LABEL } from "@/lib/format";
 import type { Chain, ScenarioKey } from "@/lib/types";
@@ -10,16 +12,16 @@ import type { Chain, ScenarioKey } from "@/lib/types";
 export const Route = createFileRoute("/intake")({
   head: () => ({
     meta: [
-      { title: "Case Intake & SAHYOG Stub — VASP Attribution Engine" },
+      { title: "Case Intake — VASP Attribution Engine" },
       {
         name: "description",
         content:
-          "Submit a suspect wallet for tracing and receive a simulated SAHYOG job receipt, or load one of five prepared forensic simulation flows.",
+          "Open a tracked investigation from a suspect wallet address and replay it against a prepared laundering typology in the demonstration console.",
       },
-      { property: "og:title", content: "Case Intake & SAHYOG Stub — VASP Attribution Engine" },
+      { property: "og:title", content: "Case Intake — VASP Attribution Engine" },
       {
         property: "og:description",
-        content: "Submit a suspect wallet for attribution tracing through the simulated SAHYOG intake channel.",
+        content: "Open a tracked investigation from a suspect wallet address in the attribution console.",
       },
     ],
   }),
@@ -39,16 +41,25 @@ const intakeSchema = z.object({
     .regex(/^[a-zA-Z0-9]+$/, "Addresses contain letters and digits only"),
   chain: z.enum(["ethereum", "tron", "bitcoin", "bnb", "polygon", "solana"]),
   complainant_agency: z.string().trim().min(3, "Enter the submitting agency").max(120, "Agency name is too long"),
+  officer: z.string().trim().min(3, "Enter the investigating officer").max(80, "Name is too long"),
+  amount: z
+    .string()
+    .trim()
+    .regex(/^[0-9]{1,12}$/, "Enter the declared amount in rupees, digits only"),
 });
 
 function IntakePage() {
   const navigate = useNavigate();
+  const cases = useCases();
   const [form, setForm] = useState({
     fir_number: "",
     suspect_address: "",
     chain: "ethereum" as Chain,
     complainant_agency: "",
+    officer: "",
+    amount: "",
   });
+  const [template, setTemplate] = useState<ScenarioKey>("exchange-inflow");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [pending, setPending] = useState(false);
   const [receipt, setReceipt] = useState<{ data: SahyogIntakeResponse; mode: ApiMode; note?: string } | null>(null);
@@ -64,40 +75,53 @@ function IntakePage() {
     }
     setErrors({});
     setPending(true);
-    const result = await submitSahyogIntake(parsed.data);
-    setReceipt(result);
-    setPending(false);
-  }
-
-  function loadScenario(key: ScenarioKey) {
-    const record = CASES.find((c) => c.scenario === key);
-    if (!record) return;
-    setForm({
-      fir_number: record.id,
-      suspect_address: record.suspectAddress,
-      chain: record.chain,
-      complainant_agency: record.agency,
+    const result = await submitSahyogIntake({
+      fir_number: parsed.data.fir_number,
+      suspect_address: parsed.data.suspect_address,
+      chain: parsed.data.chain,
+      complainant_agency: parsed.data.complainant_agency,
     });
-    setErrors({});
-    setReceipt(null);
+    setReceipt(result);
+
+    const record = createInvestigation({
+      fir_number: parsed.data.fir_number,
+      suspect_address: parsed.data.suspect_address,
+      chain: parsed.data.chain,
+      complainant_agency: parsed.data.complainant_agency,
+      officer: parsed.data.officer,
+      amountInr: Number(parsed.data.amount),
+      template,
+      jobId: result.data.job_id,
+    });
+    startTrace(record, result.data.job_id);
+    setPending(false);
+    void navigate({ to: "/cases/$caseId", params: { caseId: record.id } });
   }
 
-  const matchedCase = CASES.find((c) => c.suspectAddress.toLowerCase() === form.suspect_address.trim().toLowerCase());
+  const matchedCase = cases.find(
+    (c) => c.suspectAddress.toLowerCase() === form.suspect_address.trim().toLowerCase(),
+  );
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Case intake</h1>
         <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-          Submissions follow an async job model: the case is registered, a job ID comes back immediately, and results
-          are pushed as the trace resolves — answers on a watchlisted wallet can arrive days later.
+          Submitting a wallet opens a tracked investigation in this console: the case is registered, a job ID comes
+          back, and the trace starts running hop by hop on the case workspace.
         </p>
       </div>
+
+      <DisclosureNote title="Controlled demonstration" tone="warning">
+        This console runs on prepared case data. An intake submission creates a real, trackable case record here, but
+        the hop sequence it resolves is replayed from the laundering typology you select below — it is a simulation,
+        not a live chain pull against the address you type.
+      </DisclosureNote>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
         <Panel>
           <PanelHeader
-            title="Submit a suspect wallet"
+            title="Open an investigation"
             subtitle="Fields match the backend SahyogIntakeRequest model"
             right={<Chip tone={API_BASE_URL ? "success" : "muted"} mono>{API_BASE_URL ? "live host set" : "stub mode"}</Chip>}
           />
@@ -135,14 +159,14 @@ function IntakePage() {
                       }
                     >
                       {CHAIN_LABEL[c]}
-                      <span className="ml-1.5 font-mono text-[10px] opacity-70">{live ? "live" : "adapter only"}</span>
+                      <span className="ml-1.5 font-mono text-[10px] opacity-70">{live ? "adapter live" : "adapter only"}</span>
                     </button>
                   );
                 })}
               </div>
               <p className="mt-2 text-[11px] text-muted-foreground">
-                Ethereum and Tron pull live chain data. The other four implement the same normalisation contract but
-                are not wired to live APIs in this build.
+                The Ethereum and Tron adapters are wired to live chain APIs in the engine. The other four implement
+                the same normalisation contract but are not wired in this build.
               </p>
             </div>
             <TextField
@@ -152,19 +176,61 @@ function IntakePage() {
               error={errors["complainant_agency"]}
               onChange={(v) => setForm((f) => ({ ...f, complainant_agency: v }))}
             />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <TextField
+                label="Investigating officer"
+                value={form.officer}
+                placeholder="Insp. R. Nagaraj"
+                error={errors["officer"]}
+                onChange={(v) => setForm((f) => ({ ...f, officer: v }))}
+              />
+              <TextField
+                label="Declared amount (INR)"
+                value={form.amount}
+                placeholder="2140000"
+                mono
+                error={errors["amount"]}
+                onChange={(v) => setForm((f) => ({ ...f, amount: v.replace(/[^0-9]/g, "") }))}
+              />
+            </div>
+
+            <div>
+              <SectionLabel>Typology to replay</SectionLabel>
+              <div className="mt-2 grid gap-2">
+                {SCENARIOS.map((s) => (
+                  <button
+                    key={s.key}
+                    type="button"
+                    onClick={() => setTemplate(s.key)}
+                    className={`rounded-md border px-3 py-2 text-left transition-colors ${
+                      template === s.key
+                        ? "border-primary/50 bg-primary/10"
+                        : "border-border hover:bg-accent"
+                    }`}
+                  >
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs font-semibold">{s.name}</span>
+                      <Chip tone={s.tier === 1 ? "success" : "warning"}>Tier {s.tier}</Chip>
+                    </div>
+                    <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{s.blurb}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {matchedCase ? (
               <div className="rounded-md border border-info/40 bg-info/8 px-3 py-2.5">
                 <p className="text-[11px] font-bold tracking-[0.1em] text-info uppercase">Cross-case match</p>
                 <p className="mt-1 text-xs">
                   This address already appears in <span className="font-mono">{matchedCase.id}</span> — {matchedCase.title}.
+                  The new case will be linked to it.
                 </p>
               </div>
             ) : null}
 
             <div className="flex flex-wrap gap-2">
               <Button type="submit" disabled={pending}>
-                {pending ? "Registering…" : "Submit to SAHYOG intake"}
+                {pending ? "Registering…" : "Register case and run trace"}
               </Button>
               {matchedCase ? (
                 <Button
@@ -208,24 +274,33 @@ function IntakePage() {
 
           <Panel>
             <PanelHeader
-              title="Forensic simulation flows"
-              subtitle="Load a prepared case straight into the form"
+              title="Demonstrator cases"
+              subtitle="Prepared worked cases — open one directly, no intake needed"
             />
             <ul className="divide-y divide-border">
-              {SCENARIOS.map((s) => (
-                <li key={s.key} className="flex flex-wrap items-start justify-between gap-3 px-4 py-3">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-xs font-semibold">{s.name}</p>
-                      <Chip tone={s.tier === 1 ? "success" : "warning"}>Tier {s.tier}</Chip>
+              {SCENARIOS.map((s) => {
+                const record = cases.find((c) => c.origin !== "intake" && c.scenario === s.key);
+                return (
+                  <li key={s.key} className="flex flex-wrap items-start justify-between gap-3 px-4 py-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-xs font-semibold">{s.name}</p>
+                        <Chip tone={s.tier === 1 ? "success" : "warning"}>Tier {s.tier}</Chip>
+                      </div>
+                      <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{s.blurb}</p>
                     </div>
-                    <p className="mt-1 text-[11px] leading-relaxed text-muted-foreground">{s.blurb}</p>
-                  </div>
-                  <Button variant="outline" onClick={() => loadScenario(s.key)}>
-                    Load
-                  </Button>
-                </li>
-              ))}
+                    {record ? (
+                      <Link
+                        to="/cases/$caseId"
+                        params={{ caseId: record.id }}
+                        className="rounded-md border border-border-strong px-3 py-1.5 text-xs font-semibold hover:bg-accent"
+                      >
+                        Open case
+                      </Link>
+                    ) : null}
+                  </li>
+                );
+              })}
             </ul>
           </Panel>
 
