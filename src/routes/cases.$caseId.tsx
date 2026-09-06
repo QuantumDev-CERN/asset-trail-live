@@ -107,6 +107,8 @@ function CaseWorkspaceBody({
   const status = displayStatus(record, live);
   const stablecoin = detectStablecoin(record);
   const timeline = [...record.timeline, ...live.events].sort((a, b) => a.at.localeCompare(b.at));
+  const mixerLinks = mixerCorrelations(record, allCases);
+
   const progress =
     live.status === "idle"
       ? 0
