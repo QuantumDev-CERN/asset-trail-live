@@ -4,7 +4,7 @@ import { SCENARIOS } from "@/data/cases";
 import { displayStatus, statusTone, useCases } from "@/lib/case-store";
 import { useLiveTick } from "@/lib/live-case";
 import { bandTone, CHAIN_LABEL, formatDateTime, formatInr, shortAddress } from "@/lib/format";
-import { Chip, DisclosureNote, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
+import { Chip, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
 import type { ScenarioKey } from "@/lib/types";
 
 export const Route = createFileRoute("/cases/")({

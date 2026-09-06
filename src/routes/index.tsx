@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ALERTS, SCENARIOS } from "@/data/cases";
 import { bandTone, CHAIN_LABEL, formatInr, relativeTime, shortAddress } from "@/lib/format";
-import { Chip, DisclosureNote, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
+import { Chip, Panel, PanelHeader, SectionLabel } from "@/components/ui/primitives";
 import { displayStatus, statusTone, useCases } from "@/lib/case-store";
 import { getLiveCase, useLiveTick } from "@/lib/live-case";
 
